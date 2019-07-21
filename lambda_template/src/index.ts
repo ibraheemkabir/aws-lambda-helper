@@ -50,6 +50,11 @@ export class PingPongSqsHandler implements LambdaSqsHandler, Injectable {
             throw new Error('No message found in the SQS request');
         }
 
+        if (count > 10) {
+            console.log('Already submitted 10 messages. Time to end the party!');
+            return;
+        }
+
         config.update({region: rec.awsRegion});
         await this.sqs.sendMessage({
             DelaySeconds: 2,
