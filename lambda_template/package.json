@@ -2,26 +2,29 @@
   "name": "lambda",
   "version": "1.0.0",
   "description": "Lambda pluming for Ferrum Network packages",
-  "main": "lib/index.ts",
-  "types": "lib/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "test": "./node_modules/.bin/jest"
+    "build": "webpack",
+    "test": "./node_modules/.bin/jest",
+    "deploy-prod": "TODO: Deploy to prod",
+    "deploy": "./bin/deploy.sh"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "ts-loader": "^6.0.4",
+    "tslint-config-airbnb-base": "^0.3.0",
+    "typescript": "^3.5.3",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6"
+  },
+  "dependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-typescript": "^7.3.3",
     "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^24.0.13",
-    "ts-loader": "^6.0.4",
-    "tslint-config-airbnb-base": "^0.3.0",
-    "typescript": "^3.5.3",
-    "@types/node": "^12.6.8"
-  },
-  "dependencies": {
     "aws-sdk": "^2.496.0",
     "babel-jest": "^24.8.0",
     "jest": "^24.8.0",

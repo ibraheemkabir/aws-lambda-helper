@@ -6,7 +6,7 @@ import {SQS, config} from 'aws-sdk';
 import {LambdaConfig} from "./lib/LambdaConfig";
 import {Container, Injectable, Module} from "./lib/ioc/Container";
 
-// Once registered this is the handler code for lambda
+// Once registered this is the handler code for lambda_template
 export async function handler(event: any, context: any) {
     const container = await LambdaGlobalContext.container();
 

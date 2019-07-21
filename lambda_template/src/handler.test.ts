@@ -1,5 +1,5 @@
 import {LambdaHttpRequest, LambdaHttpResposne} from "./lib/LambdaHttpRequest";
-import {handler} from "./index";
+import {handler} from ".";
 
 test('test http request echos data', async () => {
     const req = {

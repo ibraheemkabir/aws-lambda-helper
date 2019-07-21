@@ -1,4 +1,4 @@
-import {EchoHttpHandler, PingPongSqsHandler} from './index';
+import {EchoHttpHandler, PingPongSqsHandler} from '.';
 import {LambdaSqsRequest} from './lib/LambdaSqsRequest';
 import {LambdaConfig} from './lib/LambdaConfig';
 import {SQS} from 'aws-sdk';
