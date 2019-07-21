@@ -1,4 +1,4 @@
-import {LambdaGlobalContext} from './lib/LambdaGlobalContext';
+import {LambdaGlobalContext} from 'la'
 import {LambdaHttpHandler, LambdaSqsHandler} from "./lib/HandlerFactory";
 import {LambdaHttpRequest, LambdaHttpResposne} from "./lib/LambdaHttpRequest";
 import {LambdaSqsRequest} from "./lib/LambdaSqsRequest";

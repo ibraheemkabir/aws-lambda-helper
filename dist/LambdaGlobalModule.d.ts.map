@@ -1,0 +1,1 @@
+{"version":3,"file":"LambdaGlobalModule.d.ts","sourceRoot":"","sources":["../lib/LambdaGlobalModule.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,SAAS,EAAkB,MAAM,EAAC,MAAM,iBAAiB,CAAC;AAMlE,qBAAa,kBAAmB,YAAW,MAAM;IACvC,WAAW,CAAC,SAAS,EAAE,SAAS,GAAG,OAAO,CAAC,IAAI,CAAC;CAazD"}

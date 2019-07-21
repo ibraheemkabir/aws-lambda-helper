@@ -1,9 +1,9 @@
 {
-  "name": "lambda",
+  "name": "aws-lambda-helper",
   "version": "1.0.0",
   "description": "Lambda pluming for Ferrum Network packages",
-  "main": "lib/index.ts",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "./node_modules/.bin/jest"

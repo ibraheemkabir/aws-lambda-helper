@@ -28,6 +28,7 @@
     "aws-sdk": "^2.496.0",
     "babel-jest": "^24.8.0",
     "jest": "^24.8.0",
+    "lambda": "git+https://github.com/ferrumnet/aws-lambda-helper.git",
     "webpack-babel-jest": "^1.0.4"
   }
 }
