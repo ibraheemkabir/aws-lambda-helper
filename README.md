@@ -9,7 +9,7 @@ $ ./bin/initialize-package.sh ../my-new-lambda
 
 $ cd ../my-new-lambda
 $ npm i
-$ npm run [build | test | deploy | deploy-prod]
+$ npm run [build | test | deploy]
 ```
 
 ## Lambda helper
@@ -18,45 +18,12 @@ This libary has some helper functionality, and uses dependency injection for qui
 
 You need to implement your own handlers and register them in the index.ts
 
-```
+## Steps to get a website up and running
 
-import {LambdaGlobalContext} from 'ferrum-plumbing-lambda';
-import {container} from "tsyringe";
+1. Create a lambda function in AWS console. Name it `public_<your_name>_<app_name>`
+2. Use `basic_lambda_access` as the execution role
+3. Create an API endpoin for the lambda function (from AWS console)
+4. Run `./bin/initialize-package.sh <PATH_TO_YOUR_PACKAGE>`
+5. Your package is set. Open it in your browser, build, deploy, and upload the .zip to your lambda function
 
-// Register your handlers
-container.register("LambdaHttpHandler", {
-  useClass: MyHttpHandler
-});
-container.register("LambdaSqsHandler", {
-  useClass: MySqsHandler
-});
-
-// Once registered this is the handler code for lambda
-exports.handler = async function(event: any, context: any) {
-  const lgc = container.resolve(LambdaGlobalContext);
-  return await lgc.handleAsync(event, context);
-}
-
-// Implement your specific handlers in a separate file
-export class MyHttpHandler implements LambdaHttpHandler {
-  async handle(request: LambdaHttpRequest, context: any) {
-     ...
-  }
-}
-
-// Implement your specific handlers in a separate file
-export class MySqsHandler implements LambdaSqsHandler {
-  async handle(request: LambdaSqsHandler, context: any) {
-     ...
-  }
-}
-
-```
-
-## TODOs
-
-- Write script to deploy the function
-- Push to git
-- Finish the init-repository.sh
-- Write an example using `init-repository` that pulls the
-dependency from git as well
+You need to implement `LambdaHttpHandler`. Request and reponses are types making it easier to write the code.
