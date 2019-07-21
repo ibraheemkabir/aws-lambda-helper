@@ -19,16 +19,27 @@ fi
 
 to_copy="./package.json ./tsconfig.json tsconfig.json tslint.json webpack.config.js babel.config.js src/index.ts"
 to_copy_src="index.ts index.test.ts handler.test.ts"
+to_copy_bin="deploy.sh"
+
+base="./lambda_template"
 
 for f in $to_copy; do
     echo Copying $f to ${1%/}/
-    cp $f ${1%/}/
+    cp $base/$f ${1%/}/
 done
 
 mkdir ${1%/}/src
 
 for f in $to_copy_src; do
     echo Copying $f to ${1%/}/
-    cp ./src/${f} ${1%/}/src/
+    cp $base/src/${f} ${1%/}/src/
 done
+
+mkdir ${1%/}/bin
+
+for f in $to_copy_bin; do
+    echo Copying $f to ${1%/}/
+    cp $base/bin/${f} ${1%/}/bin/
+done
+
 

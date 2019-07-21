@@ -25,10 +25,10 @@
     "@babel/preset-typescript": "^7.3.3",
     "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^24.0.13",
+    "aws-lambda-helper": "git+https://github.com/ferrumnet/aws-lambda-helper.git",
     "aws-sdk": "^2.496.0",
     "babel-jest": "^24.8.0",
     "jest": "^24.8.0",
-    "lambda": "git+https://github.com/ferrumnet/aws-lambda-helper.git",
     "webpack-babel-jest": "^1.0.4"
   }
 }

@@ -1270,6 +1270,15 @@ atob@^2.1.1:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
+"aws-lambda-helper@git+https://github.com/ferrumnet/aws-lambda-helper.git":
+  version "1.0.0"
+  resolved "git+https://github.com/ferrumnet/aws-lambda-helper.git#ae02c767a5a482d8b4005c67dd58e4e2905f8a44"
+  dependencies:
+    aws-sdk "^2.496.0"
+    babel-jest "^24.8.0"
+    jest "^24.8.0"
+    webpack-babel-jest "^1.0.4"
+
 aws-sdk@*, aws-sdk@^2.496.0:
   version "2.496.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.496.0.tgz#073bf36ed868891a656a895bf2c548b2d0bc3588"
@@ -3539,15 +3548,6 @@ kleur@^3.0.2:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
-
-"lambda@git+https://github.com/ferrumnet/aws-lambda-helper.git":
-  version "1.0.0"
-  resolved "git+https://github.com/ferrumnet/aws-lambda-helper.git#499a0afac1aedcfa1f0ee214bb806cc36a1b6d60"
-  dependencies:
-    aws-sdk "^2.496.0"
-    babel-jest "^24.8.0"
-    jest "^24.8.0"
-    webpack-babel-jest "^1.0.4"
 
 lcid@^2.0.0:
   version "2.0.0"

@@ -1,5 +1,5 @@
-import {LambdaHttpRequest, LambdaHttpResposne} from "./lib/LambdaHttpRequest";
 import {handler} from ".";
+import {LambdaHttpRequest, LambdaHttpResposne} from "aws-lambda-helper";
 
 test('test http request echos data', async () => {
     const req = {

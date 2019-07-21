@@ -1,9 +1,7 @@
 import {EchoHttpHandler, PingPongSqsHandler} from '.';
-import {LambdaSqsRequest} from './lib/LambdaSqsRequest';
-import {LambdaConfig} from './lib/LambdaConfig';
 import {SQS} from 'aws-sdk';
 import {SendMessageRequest} from "aws-sdk/clients/sqs";
-import {LambdaHttpRequest} from "./lib/LambdaHttpRequest";
+import {LambdaConfig, LambdaHttpRequest, LambdaSqsRequest} from "aws-lambda-helper";
 
 jest.mock('./lib/LambdaConfig', () => ({
     LambdaConfig: jest.fn().mockImplementation()

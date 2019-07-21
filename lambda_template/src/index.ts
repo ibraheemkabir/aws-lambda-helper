@@ -1,10 +1,14 @@
-import {LambdaGlobalContext} from 'la'
-import {LambdaHttpHandler, LambdaSqsHandler} from "./lib/HandlerFactory";
-import {LambdaHttpRequest, LambdaHttpResposne} from "./lib/LambdaHttpRequest";
-import {LambdaSqsRequest} from "./lib/LambdaSqsRequest";
 import {SQS, config} from 'aws-sdk';
-import {LambdaConfig} from "./lib/LambdaConfig";
-import {Container, Injectable, Module} from "./lib/ioc/Container";
+import {
+    Container,
+    Injectable,
+    LambdaConfig,
+    LambdaGlobalContext,
+    LambdaHttpRequest,
+    LambdaHttpResposne,
+    LambdaSqsRequest, Module
+} from "aws-lambda-helper/dist";
+import {LambdaHttpHandler, LambdaSqsHandler} from "aws-lambda-helper/dist/HandlerFactory";
 
 // Once registered this is the handler code for lambda_template
 export async function handler(event: any, context: any) {
@@ -20,7 +24,7 @@ export async function handler(event: any, context: any) {
 export class EchoHttpHandler implements LambdaHttpHandler {
     async handle(request: LambdaHttpRequest, context: any): Promise<LambdaHttpResposne> {
         return {
-            body: 'You did say ' + request.queryStringParameters['message'],
+            body: 'You did actually say ' + request.queryStringParameters['message'],
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'text/html',
