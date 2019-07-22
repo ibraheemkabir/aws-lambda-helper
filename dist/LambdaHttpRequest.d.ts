@@ -54,5 +54,7 @@ export interface LambdaHttpRequest {
     "httpMethod": "GET" | "POST";
     "queryStringParameters": any;
     "stageVariables": any;
+    "isBase64Encoded": boolean;
+    "body": string;
 }
 //# sourceMappingURL=LambdaHttpRequest.d.ts.map

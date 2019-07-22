@@ -55,5 +55,7 @@ export interface LambdaHttpRequest {
     "resource": string,
     "httpMethod": "GET" | "POST",
     "queryStringParameters": any,
-    "stageVariables": any
+    "stageVariables": any,
+    "isBase64Encoded": boolean,
+    "body": string,
 }
