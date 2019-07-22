@@ -1,7 +1,7 @@
 
 export interface LambdaHttpResposne {
     "isBase64Encoded": boolean,
-    "statusCode": 200 | 400,
+    "statusCode": 200 | 400 | 500,
     "headers": any,
     "body": any,
 }
