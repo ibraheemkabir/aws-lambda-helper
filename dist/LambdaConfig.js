@@ -19,6 +19,7 @@ class LambdaConfig {
     init() {
         return __awaiter(this, void 0, void 0, function* () {
             this.sqsQueueUrl = p.env[LambdaConfig.Envs.LAMBDA_SQS_QUEUE_URL];
+            this.snsErrorArn = p.env[LambdaConfig.Envs.LAMBDA_SNS_ERROR_ARN];
             const secretId = p.env[LambdaConfig.Envs.AWS_SECRET_ARN];
             if (secretId) {
                 const secret = yield this.secretManager.getSecretValue({ SecretId: secretId }).promise();
@@ -42,6 +43,7 @@ LambdaConfig.Keys = {
 };
 LambdaConfig.Envs = {
     LAMBDA_SQS_QUEUE_URL: 'LAMBDA_SQS_QUEUE_URL',
+    LAMBDA_SNS_ERROR_ARN: 'LAMBDA_SNS_ERROR_ARN',
     AWS_SECRET_ARN: 'AWS_SECRET_ARN',
     REGION: 'REGION',
 };

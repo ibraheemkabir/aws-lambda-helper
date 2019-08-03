@@ -5,7 +5,7 @@ import {SecretsManager} from 'aws-sdk';
 const p: any = process;
 
 export class LambdaConfig implements Injectable {
-    static DefaultRegion = 'us-east-1';
+    static DefaultRegion ='us-east-1';
     static Keys = {
         FirebaseJson: 'firebase_json',
         FirebaseProjectId: 'firebase_project_id',
@@ -17,10 +17,12 @@ export class LambdaConfig implements Injectable {
     };
     static Envs = {
         LAMBDA_SQS_QUEUE_URL: 'LAMBDA_SQS_QUEUE_URL',
+        LAMBDA_SNS_ERROR_ARN: 'LAMBDA_SNS_ERROR_ARN',
         AWS_SECRET_ARN: 'AWS_SECRET_ARN',
         REGION: 'REGION',
     };
     public sqsQueueUrl: string | undefined;
+    public snsErrorArn: string | undefined;
     public awsRegion: string;
     public secrets: { [key: string]: string } = {};
     constructor(private secretManager: SecretsManager) {
@@ -29,6 +31,7 @@ export class LambdaConfig implements Injectable {
 
     async init(): Promise<void> {
         this.sqsQueueUrl = p.env[LambdaConfig.Envs.LAMBDA_SQS_QUEUE_URL];
+        this.snsErrorArn = p.env[LambdaConfig.Envs.LAMBDA_SNS_ERROR_ARN];
 
         const secretId = p.env[LambdaConfig.Envs.AWS_SECRET_ARN];
         if (secretId) {

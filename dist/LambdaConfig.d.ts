@@ -14,10 +14,12 @@ export declare class LambdaConfig implements Injectable {
     };
     static Envs: {
         LAMBDA_SQS_QUEUE_URL: string;
+        LAMBDA_SNS_ERROR_ARN: string;
         AWS_SECRET_ARN: string;
         REGION: string;
     };
     sqsQueueUrl: string | undefined;
+    snsErrorArn: string | undefined;
     awsRegion: string;
     secrets: {
         [key: string]: string;
