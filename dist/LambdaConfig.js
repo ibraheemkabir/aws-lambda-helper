@@ -15,6 +15,7 @@ class LambdaConfig {
         this.secretManager = secretManager;
         this.secrets = {};
         this.awsRegion = p.env[LambdaConfig.Envs.REGION] || LambdaConfig.DefaultRegion;
+        this.custom = p.env[LambdaConfig.Envs.CONFIG_JSON] ? JSON.parse(p.env[LambdaConfig.Envs.CONFIG_JSON]) : {};
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -46,6 +47,7 @@ LambdaConfig.Envs = {
     LAMBDA_SNS_ERROR_ARN: 'LAMBDA_SNS_ERROR_ARN',
     AWS_SECRET_ARN: 'AWS_SECRET_ARN',
     REGION: 'REGION',
+    CONFIG_JSON: 'CONFIG_JSON',
 };
 exports.LambdaConfig = LambdaConfig;
 //# sourceMappingURL=LambdaConfig.js.map

@@ -20,13 +20,16 @@ export class LambdaConfig implements Injectable {
         LAMBDA_SNS_ERROR_ARN: 'LAMBDA_SNS_ERROR_ARN',
         AWS_SECRET_ARN: 'AWS_SECRET_ARN',
         REGION: 'REGION',
+        CONFIG_JSON: 'CONFIG_JSON',
     };
     public sqsQueueUrl: string | undefined;
     public snsErrorArn: string | undefined;
     public awsRegion: string;
     public secrets: { [key: string]: string } = {};
+    public custom: any;
     constructor(private secretManager: SecretsManager) {
         this.awsRegion = p.env[LambdaConfig.Envs.REGION] || LambdaConfig.DefaultRegion;
+        this.custom = p.env[LambdaConfig.Envs.CONFIG_JSON] ? JSON.parse(p.env[LambdaConfig.Envs.CONFIG_JSON]) : {};
     }
 
     async init(): Promise<void> {

@@ -17,6 +17,7 @@ export declare class LambdaConfig implements Injectable {
         LAMBDA_SNS_ERROR_ARN: string;
         AWS_SECRET_ARN: string;
         REGION: string;
+        CONFIG_JSON: string;
     };
     sqsQueueUrl: string | undefined;
     snsErrorArn: string | undefined;
@@ -24,6 +25,7 @@ export declare class LambdaConfig implements Injectable {
     secrets: {
         [key: string]: string;
     };
+    custom: any;
     constructor(secretManager: SecretsManager);
     init(): Promise<void>;
     __name__(): string;
