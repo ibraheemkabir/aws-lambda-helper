@@ -23,6 +23,8 @@ class LambdaGlobalModule {
             yield config.init();
             Container_1.makeInjectable('SQS', aws_sdk_1.SQS);
             container.register(aws_sdk_1.SQS, () => new aws_sdk_1.SQS());
+            Container_1.makeInjectable('SNS', aws_sdk_1.SNS);
+            container.register(aws_sdk_1.SNS, () => new aws_sdk_1.SNS());
             container.register(LambdaConfig_1.LambdaConfig, () => config);
             container.register(HandlerFactory_1.HandlerFactory, c => new HandlerFactory_1.HandlerFactory(c.get('LambdaSqsHandler'), c.get('LambdaHttpHandler')));
             container.register(LambdaGlobalContext_1.LambdaGlobalContext, c => new LambdaGlobalContext_1.LambdaGlobalContext(c.get(HandlerFactory_1.HandlerFactory)));
