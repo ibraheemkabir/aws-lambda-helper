@@ -15,9 +15,11 @@ function makeInjectable(name, type) {
     type.prototype.__name__ = () => name;
 }
 exports.makeInjectable = makeInjectable;
+const UNDEFINED_VALUE = '__UNDEFINED_VALUE__';
 class Container {
     constructor() {
         this.catalog = {};
+        this.singleTons = {};
         this.stack = new Set();
     }
     registerModule(m) {
@@ -33,14 +35,25 @@ class Container {
         if (this.stack.has(name)) {
             throw new ContainerError(`Type ${name} is in a recursive definition loop: ${Array.from(this.stack)}`);
         }
+        if (this.singleTons[name] && this.singleTons[name] !== UNDEFINED_VALUE) {
+            return this.singleTons[name];
+        }
         this.stack.add(name);
         const res = this.catalog[name](this);
         this.stack.delete(name);
+        if (this.singleTons[name]) {
+            this.singleTons[name] = res;
+        }
         return res;
     }
     register(type, factory) {
         const name = this.name(type);
         this.catalog[name] = factory;
+    }
+    registerSingleton(type, factory) {
+        const name = this.name(type);
+        this.catalog[name] = factory;
+        this.singleTons[name] = UNDEFINED_VALUE;
     }
     name(type) {
         if (typeof type === 'string') {
