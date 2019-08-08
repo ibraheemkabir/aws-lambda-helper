@@ -18,10 +18,12 @@ export declare class LambdaConfig implements Injectable {
         AWS_SECRET_ARN: string;
         REGION: string;
         CONFIG_JSON: string;
+        CORS_ALLOW: string;
     };
     sqsQueueUrl: string | undefined;
     snsErrorArn: string | undefined;
     awsRegion: string;
+    corsAllow: string;
     secrets: {
         [key: string]: string;
     };

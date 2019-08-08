@@ -16,6 +16,7 @@ class LambdaConfig {
         this.secrets = {};
         this.awsRegion = p.env[LambdaConfig.Envs.REGION] || LambdaConfig.DefaultRegion;
         this.custom = p.env[LambdaConfig.Envs.CONFIG_JSON] ? JSON.parse(p.env[LambdaConfig.Envs.CONFIG_JSON]) : {};
+        this.corsAllow = p.env[LambdaConfig.Envs.CORS_ALLOW];
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -48,6 +49,7 @@ LambdaConfig.Envs = {
     AWS_SECRET_ARN: 'AWS_SECRET_ARN',
     REGION: 'REGION',
     CONFIG_JSON: 'CONFIG_JSON',
+    CORS_ALLOW: 'CORS_ALLOW',
 };
 exports.LambdaConfig = LambdaConfig;
 //# sourceMappingURL=LambdaConfig.js.map

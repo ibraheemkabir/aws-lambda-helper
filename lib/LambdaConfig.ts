@@ -21,15 +21,18 @@ export class LambdaConfig implements Injectable {
         AWS_SECRET_ARN: 'AWS_SECRET_ARN',
         REGION: 'REGION',
         CONFIG_JSON: 'CONFIG_JSON',
+        CORS_ALLOW: 'CORS_ALLOW',
     };
     public sqsQueueUrl: string | undefined;
     public snsErrorArn: string | undefined;
     public awsRegion: string;
+    public corsAllow: string;
     public secrets: { [key: string]: string } = {};
     public custom: any;
     constructor(private secretManager: SecretsManager) {
         this.awsRegion = p.env[LambdaConfig.Envs.REGION] || LambdaConfig.DefaultRegion;
         this.custom = p.env[LambdaConfig.Envs.CONFIG_JSON] ? JSON.parse(p.env[LambdaConfig.Envs.CONFIG_JSON]) : {};
+        this.corsAllow = p.env[LambdaConfig.Envs.CORS_ALLOW];
     }
 
     async init(): Promise<void> {
