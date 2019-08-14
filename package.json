@@ -16,15 +16,18 @@
     "@babel/preset-typescript": "^7.3.3",
     "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^24.0.13",
+    "@types/node": "^12.6.8",
+    "@types/node-fetch": "^2.5.0",
+    "babel-jest": "^24.8.0",
+    "jest": "^24.8.0",
     "ts-loader": "^6.0.4",
+    "tslint": "^5.0.0",
     "tslint-config-airbnb-base": "^0.3.0",
     "typescript": "^3.5.3",
-    "@types/node": "^12.6.8"
+    "webpack-babel-jest": "^1.0.4"
   },
   "dependencies": {
     "aws-sdk": "^2.496.0",
-    "babel-jest": "^24.8.0",
-    "jest": "^24.8.0",
-    "webpack-babel-jest": "^1.0.4"
+    "ferrum-plumbing": "https://github.com/ferrumnet/plumbing-js.git"
   }
 }

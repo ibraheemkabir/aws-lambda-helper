@@ -1,4 +1,4 @@
-import { Container, Module } from './ioc/Container';
+import { Container, Module } from 'ferrum-plumbing';
 export declare class LambdaGlobalModule implements Module {
     configAsync(container: Container): Promise<void>;
 }

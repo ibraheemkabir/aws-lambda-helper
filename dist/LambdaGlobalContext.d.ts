@@ -1,5 +1,5 @@
-import { HandlerFactory } from "./HandlerFactory";
-import { Container, Injectable } from "./ioc/Container";
+import { HandlerFactory } from './HandlerFactory';
+import { Injectable, Container } from 'ferrum-plumbing';
 export declare class LambdaGlobalContext implements Injectable {
     private factory;
     private static _container;

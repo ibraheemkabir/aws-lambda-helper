@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable:variable-name
 // @ts-ignore
 const p = process;
 class LambdaConfig {
@@ -15,7 +16,8 @@ class LambdaConfig {
         this.secretManager = secretManager;
         this.secrets = {};
         this.awsRegion = p.env[LambdaConfig.Envs.REGION] || LambdaConfig.DefaultRegion;
-        this.custom = p.env[LambdaConfig.Envs.CONFIG_JSON] ? JSON.parse(p.env[LambdaConfig.Envs.CONFIG_JSON]) : {};
+        this.custom = p.env[LambdaConfig.Envs.CONFIG_JSON] ?
+            JSON.parse(p.env[LambdaConfig.Envs.CONFIG_JSON]) : {};
         this.corsAllow = p.env[LambdaConfig.Envs.CORS_ALLOW];
     }
     init() {
@@ -43,6 +45,7 @@ LambdaConfig.Keys = {
     MongoPassword: 'mongo_password',
     MongoUser: 'mongo_user',
 };
+// tslint:disable-next-line:variable-name
 LambdaConfig.Envs = {
     LAMBDA_SQS_QUEUE_URL: 'LAMBDA_SQS_QUEUE_URL',
     LAMBDA_SNS_ERROR_ARN: 'LAMBDA_SNS_ERROR_ARN',

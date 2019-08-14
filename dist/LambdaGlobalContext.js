@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Container_1 = require("./ioc/Container");
 const LambdaGlobalModule_1 = require("./LambdaGlobalModule");
+const ferrum_plumbing_1 = require("ferrum-plumbing");
 class LambdaGlobalContext {
     constructor(factory) {
         this.factory = factory;
@@ -17,7 +17,7 @@ class LambdaGlobalContext {
     static container() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!LambdaGlobalContext._container) {
-                LambdaGlobalContext._container = new Container_1.Container();
+                LambdaGlobalContext._container = new ferrum_plumbing_1.Container();
                 yield LambdaGlobalContext._container.registerModule(new LambdaGlobalModule_1.LambdaGlobalModule());
             }
             return LambdaGlobalContext._container;
@@ -25,7 +25,7 @@ class LambdaGlobalContext {
     }
     handleAsync(req, context) {
         return __awaiter(this, void 0, void 0, function* () {
-            const reqType = !!req.httpMethod ? 'http' :
+            const reqType = req.httpMethod ? 'http' :
                 'sqs';
             return this.factory.get(reqType).handle(req, context);
         });

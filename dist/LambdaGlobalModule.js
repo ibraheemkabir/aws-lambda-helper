@@ -8,11 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Container_1 = require("./ioc/Container");
 const HandlerFactory_1 = require("./HandlerFactory");
 const LambdaGlobalContext_1 = require("./LambdaGlobalContext");
 const LambdaConfig_1 = require("./LambdaConfig");
 const aws_sdk_1 = require("aws-sdk");
+const ferrum_plumbing_1 = require("ferrum-plumbing");
 class LambdaGlobalModule {
     configAsync(container) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -21,9 +21,9 @@ class LambdaGlobalModule {
             const secretManager = new aws_sdk_1.SecretsManager({ region });
             const config = new LambdaConfig_1.LambdaConfig(secretManager);
             yield config.init();
-            Container_1.makeInjectable('SQS', aws_sdk_1.SQS);
+            ferrum_plumbing_1.makeInjectable('SQS', aws_sdk_1.SQS);
             container.register(aws_sdk_1.SQS, () => new aws_sdk_1.SQS());
-            Container_1.makeInjectable('SNS', aws_sdk_1.SNS);
+            ferrum_plumbing_1.makeInjectable('SNS', aws_sdk_1.SNS);
             container.register(aws_sdk_1.SNS, () => new aws_sdk_1.SNS());
             container.register(LambdaConfig_1.LambdaConfig, () => config);
             container.register(HandlerFactory_1.HandlerFactory, c => new HandlerFactory_1.HandlerFactory(c.get('LambdaSqsHandler'), c.get('LambdaHttpHandler')));

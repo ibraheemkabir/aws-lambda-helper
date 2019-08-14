@@ -1,5 +1,5 @@
-import { Injectable } from './ioc/Container';
 import { SecretsManager } from 'aws-sdk';
+import { Injectable } from 'ferrum-plumbing';
 export declare class LambdaConfig implements Injectable {
     private secretManager;
     static DefaultRegion: string;
