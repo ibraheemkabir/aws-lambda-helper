@@ -1,7 +1,7 @@
 import { HandlerFactory } from './HandlerFactory';
 import { LambdaGlobalContext } from './LambdaGlobalContext';
 import { LambdaConfig } from './LambdaConfig';
-import { SecretsManager, SNS, SQS } from 'aws-sdk';
+import { SecretsManager, SNS, SQS, KMS } from 'aws-sdk';
 import { Container, Module, makeInjectable } from 'ferrum-plumbing';
 
 export class LambdaGlobalModule implements Module {
@@ -12,6 +12,7 @@ export class LambdaGlobalModule implements Module {
     const config = new LambdaConfig(secretManager);
     await config.init();
     makeInjectable('SQS', SQS);
+    makeInjectable('KMS', KMS);
     container.register(SQS, () => new SQS());
     makeInjectable('SNS', SNS);
     container.register(SNS, () => new SNS());

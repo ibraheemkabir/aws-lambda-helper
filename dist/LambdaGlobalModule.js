@@ -22,6 +22,7 @@ class LambdaGlobalModule {
             const config = new LambdaConfig_1.LambdaConfig(secretManager);
             yield config.init();
             ferrum_plumbing_1.makeInjectable('SQS', aws_sdk_1.SQS);
+            ferrum_plumbing_1.makeInjectable('KMS', aws_sdk_1.KMS);
             container.register(aws_sdk_1.SQS, () => new aws_sdk_1.SQS());
             ferrum_plumbing_1.makeInjectable('SNS', aws_sdk_1.SNS);
             container.register(aws_sdk_1.SNS, () => new aws_sdk_1.SNS());

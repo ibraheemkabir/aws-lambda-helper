@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.496.0",
-    "ferrum-plumbing": "https://github.com/ferrumnet/plumbing-js.git"
+    "ferrum-crypto": "git+https://github.com/ferrumnet/ferrum-crypto.git",
+    "ferrum-plumbing": "git+https://github.com/ferrumnet/ferrum-plumbing.git"
   }
 }

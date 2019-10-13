@@ -1,1 +1,1 @@
-{"version":3,"file":"LambdaGlobalModule.d.ts","sourceRoot":"","sources":["../lib/LambdaGlobalModule.ts"],"names":[],"mappings":"AAIA,OAAO,EAAE,SAAS,EAAE,MAAM,EAAkB,MAAM,iBAAiB,CAAC;AAEpE,qBAAa,kBAAmB,YAAW,MAAM;IACzC,WAAW,CAAC,SAAS,EAAE,SAAS,GAAG,OAAO,CAAC,IAAI,CAAC;CAevD"}
+{"version":3,"file":"LambdaGlobalModule.d.ts","sourceRoot":"","sources":["../lib/LambdaGlobalModule.ts"],"names":[],"mappings":"AAIA,OAAO,EAAE,SAAS,EAAE,MAAM,EAAkB,MAAM,iBAAiB,CAAC;AAEpE,qBAAa,kBAAmB,YAAW,MAAM;IACzC,WAAW,CAAC,SAAS,EAAE,SAAS,GAAG,OAAO,CAAC,IAAI,CAAC;CAgBvD"}
