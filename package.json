@@ -16,6 +16,8 @@
     "@babel/preset-typescript": "^7.3.3",
     "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^24.0.13",
+    "@types/mongodb": "^3.3.6",
+    "@types/mongoose": "^5.5.23",
     "@types/node": "^12.6.8",
     "@types/node-fetch": "^2.5.0",
     "babel-jest": "^24.8.0",
@@ -29,6 +31,7 @@
   "dependencies": {
     "aws-sdk": "^2.496.0",
     "ferrum-crypto": "git+https://github.com/ferrumnet/ferrum-crypto.git",
-    "ferrum-plumbing": "git+https://github.com/ferrumnet/ferrum-plumbing.git"
+    "ferrum-plumbing": "git+https://github.com/ferrumnet/ferrum-plumbing.git",
+    "mongoose": "^5.7.7"
   }
 }
