@@ -10,9 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const aws_sdk_1 = require("aws-sdk");
 class SqsWrapper {
-    constructor(conf, sync) {
+    constructor(conf, sync, version, messageId) {
         this.conf = conf;
         this.sync = sync;
+        this.version = version;
+        this.messageId = messageId;
         this._onMessage = undefined;
         this.sqs = new aws_sdk_1.SQS({ endpoint: conf.endpoint });
     }
@@ -25,7 +27,16 @@ class SqsWrapper {
                 }).promise();
                 if (this.sync) {
                     for (let msg of res.Messages || []) {
-                        yield this._onMessage(JSON.parse(msg.Body));
+                        try {
+                            yield this._onMessage(JSON.parse(msg.Body).data);
+                            this.sqs.deleteMessage({
+                                QueueUrl: this.conf.sqsQueue,
+                                ReceiptHandle: msg.ReceiptHandle,
+                            });
+                        }
+                        catch (e) {
+                            console.error('Error processing SQS message', e);
+                        }
                     }
                 }
                 else {
@@ -33,6 +44,19 @@ class SqsWrapper {
                     yield Promise.all(results);
                 }
             }
+        });
+    }
+    send(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedMessage = {
+                data: data,
+                messageId: this.messageId,
+                version: this.version,
+            };
+            this.sqs.sendMessage({
+                QueueUrl: this.conf.sqsQueue,
+                MessageBody: JSON.stringify(wrappedMessage),
+            });
         });
     }
     listen(fun) {
