@@ -6,4 +6,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./LambdaConfig"));
 __export(require("./LambdaGlobalContext"));
 __export(require("./aws/KmsCryptor"));
+__export(require("./aws/SqsWrapper"));
 //# sourceMappingURL=index.js.map

@@ -5,6 +5,15 @@ import { Injectable } from 'ferrum-plumbing';
 // @ts-ignore
 const p: any = process;
 
+export interface AwsConfig {
+  /**
+   * The endpoint URI to send requests to. The default endpoint is built from the configured region.
+   * The endpoint should be a string like 'https://{service}.{region}.amazonaws.com'.
+   */
+  endpoint?:  string;
+  sqsQueue?: string;
+}
+
 export class LambdaConfig implements Injectable {
   static DefaultRegion ='us-east-1';
   static Keys = {
