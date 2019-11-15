@@ -1,5 +1,6 @@
 import { AwsConfig } from '../LambdaConfig';
 import { SQS } from 'aws-sdk';
+import { LoggerFactory } from 'ferrum-plumbing';
 export interface ListenerCancellation {
     cancelled: boolean;
 }
@@ -15,7 +16,8 @@ export declare class SqsWrapper<T> {
     private version;
     private messageId;
     private _onMessage;
-    constructor(conf: AwsConfig, sqs: SQS, sync: boolean, version: string, messageId: string);
+    private log;
+    constructor(conf: AwsConfig, loggerFactory: LoggerFactory, sqs: SQS, sync: boolean, version: string, messageId: string);
     listenForever(cancellationToken: ListenerCancellation): Promise<void>;
     send(data: T): Promise<void>;
     listen(fun: (v: T) => Promise<void>): void;

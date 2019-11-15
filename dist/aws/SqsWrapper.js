@@ -9,13 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class SqsWrapper {
-    constructor(conf, sqs, sync, version, messageId) {
+    constructor(conf, loggerFactory, sqs, sync, version, messageId) {
         this.conf = conf;
         this.sqs = sqs;
         this.sync = sync;
         this.version = version;
         this.messageId = messageId;
         this._onMessage = undefined;
+        this.log = loggerFactory.getLogger('SqsWrapper');
     }
     listenForever(cancellationToken) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -27,7 +28,21 @@ class SqsWrapper {
                 if (this.sync) {
                     for (let msg of res.Messages || []) {
                         try {
-                            yield this._onMessage(JSON.parse(msg.Body).data);
+                            this.log.info('Receive message ', msg);
+                            let jsonMsg = undefined;
+                            try {
+                                jsonMsg = JSON.parse(msg.Body);
+                            }
+                            catch (e) {
+                                this.log.error('listenForever: Error parsing message. Ignoring: ', msg);
+                            }
+                            if (jsonMsg && jsonMsg.version === this.version && jsonMsg.messageId === this.messageId) {
+                                yield this._onMessage((JSON.parse(msg.Body)).data);
+                            }
+                            else if (!!jsonMsg) {
+                                this.log.error(`Received and invalid message; igonring. Expected: ${this.messageId}@${this.version}` +
+                                    ` but received: ${jsonMsg.messageId}@${jsonMsg.version}`);
+                            }
                             this.sqs.deleteMessage({
                                 QueueUrl: this.conf.sqsQueue,
                                 ReceiptHandle: msg.ReceiptHandle,

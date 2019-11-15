@@ -1,6 +1,7 @@
 import {AwsConfig} from '../LambdaConfig';
 import {SQS} from 'aws-sdk';
 import { ReceiveMessageRequest, SendMessageRequest, DeleteMessageRequest } from 'aws-sdk/clients/sqs';
+import { LoggerFactory, Logger } from 'ferrum-plumbing';
 
 export interface ListenerCancellation {
     cancelled: boolean;
@@ -14,11 +15,14 @@ export interface SqsMessageWrapper<T> {
 
 export class SqsWrapper<T> {
     private _onMessage : ((v: T) => Promise<void>) | undefined = undefined;
+    private log: Logger;
     constructor(private conf: AwsConfig,
+                loggerFactory: LoggerFactory,
                 private sqs: SQS,
                 private sync: boolean,
                 private version: string,
                 private messageId: string) {
+        this.log = loggerFactory.getLogger('SqsWrapper');
     }
 
     async listenForever(cancellationToken: ListenerCancellation): Promise<void> {
@@ -30,7 +34,21 @@ export class SqsWrapper<T> {
             if (this.sync) {
                 for (let msg of res.Messages || []) {
                     try {
-                        await this._onMessage!((JSON.parse(msg.Body!) as SqsMessageWrapper<T>).data);
+                        this.log.info('Receive message ', msg);
+                        let jsonMsg: SqsMessageWrapper<T>|undefined = undefined;
+                        try {
+                            jsonMsg = JSON.parse(msg.Body!) as SqsMessageWrapper<T>;
+                        } catch (e) {
+                            this.log.error('listenForever: Error parsing message. Ignoring: ', msg);
+                        }
+                        if (jsonMsg && jsonMsg.version === this.version && jsonMsg.messageId === this.messageId) {
+                            await this._onMessage!((JSON.parse(msg.Body!) ).data);
+                        } else if (!!jsonMsg) {
+                            this.log.error(
+                                `Received and invalid message; igonring. Expected: ${this.messageId}@${this.version}` +
+                                ` but received: ${jsonMsg!.messageId}@${jsonMsg.version}`
+                            );
+                        }
                         this.sqs.deleteMessage({
                             QueueUrl: this.conf.sqsQueue,
                             ReceiptHandle: msg.ReceiptHandle,
