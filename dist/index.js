@@ -7,5 +7,6 @@ __export(require("./LambdaConfig"));
 __export(require("./LambdaGlobalContext"));
 __export(require("./aws/KmsCryptor"));
 __export(require("./aws/SqsWrapper"));
+__export(require("./aws/SecretsProvider"));
 __export(require("./dataLayer/mongoose/MongooseConnector"));
 //# sourceMappingURL=index.js.map

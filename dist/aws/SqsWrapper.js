@@ -43,11 +43,10 @@ class SqsWrapper {
                                 this.log.error(`Received and invalid message; ignoring. Expected: ${this.messageId}@${this.version}` +
                                     ` but received: ${jsonMsg.messageId}@${jsonMsg.version}: `, msg);
                             }
-                            const res = yield this.sqs.deleteMessage({
+                            yield this.sqs.deleteMessage({
                                 QueueUrl: this.conf.sqsQueue,
                                 ReceiptHandle: msg.ReceiptHandle,
                             }).promise();
-                            this.log.debug('Deleted message ', res);
                         }
                         catch (e) {
                             console.error('Error processing SQS message', e);

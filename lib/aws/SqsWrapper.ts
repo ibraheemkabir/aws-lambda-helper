@@ -49,11 +49,11 @@ export class SqsWrapper<T> {
                                 ` but received: ${jsonMsg!.messageId}@${jsonMsg.version}: `, msg
                             );
                         }
-                        const res = await this.sqs.deleteMessage({
+
+                        await this.sqs.deleteMessage({
                             QueueUrl: this.conf.sqsQueue,
                             ReceiptHandle: msg.ReceiptHandle,
                         } as DeleteMessageRequest).promise();
-                        this.log.debug('Deleted message ', res);
                     } catch (e) {
                         console.error('Error processing SQS message', e);
                     }
