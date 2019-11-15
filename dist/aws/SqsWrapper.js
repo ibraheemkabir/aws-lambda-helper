@@ -24,6 +24,7 @@ class SqsWrapper {
                 const res = yield this.sqs.receiveMessage({
                     QueueUrl: this.conf.sqsQueue,
                     WaitTimeSeconds: 10,
+                    VisibilityTimeout: 30,
                 }).promise();
                 if (this.sync) {
                     for (let msg of res.Messages || []) {
@@ -39,13 +40,14 @@ class SqsWrapper {
                                 yield this._onMessage((JSON.parse(msg.Body)).data);
                             }
                             else if (!!jsonMsg) {
-                                this.log.error(`Received and invalid message; igonring. Expected: ${this.messageId}@${this.version}` +
+                                this.log.error(`Received and invalid message; ignoring. Expected: ${this.messageId}@${this.version}` +
                                     ` but received: ${jsonMsg.messageId}@${jsonMsg.version}: `, msg);
                             }
-                            yield this.sqs.deleteMessage({
+                            const res = yield this.sqs.deleteMessage({
                                 QueueUrl: this.conf.sqsQueue,
                                 ReceiptHandle: msg.ReceiptHandle,
-                            });
+                            }).promise();
+                            this.log.debug('Deleted message ', res);
                         }
                         catch (e) {
                             console.error('Error processing SQS message', e);
