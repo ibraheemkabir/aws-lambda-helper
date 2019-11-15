@@ -28,7 +28,6 @@ class SqsWrapper {
                 if (this.sync) {
                     for (let msg of res.Messages || []) {
                         try {
-                            this.log.info('Receive message ', msg);
                             let jsonMsg = undefined;
                             try {
                                 jsonMsg = JSON.parse(msg.Body);
@@ -36,14 +35,14 @@ class SqsWrapper {
                             catch (e) {
                                 this.log.error('listenForever: Error parsing message. Ignoring: ', msg);
                             }
-                            if (jsonMsg && jsonMsg.version === this.version && jsonMsg.messageId === this.messageId) {
+                            if (jsonMsg && jsonMsg.version == this.version && jsonMsg.messageId === this.messageId) {
                                 yield this._onMessage((JSON.parse(msg.Body)).data);
                             }
                             else if (!!jsonMsg) {
                                 this.log.error(`Received and invalid message; igonring. Expected: ${this.messageId}@${this.version}` +
-                                    ` but received: ${jsonMsg.messageId}@${jsonMsg.version}`);
+                                    ` but received: ${jsonMsg.messageId}@${jsonMsg.version}: `, msg);
                             }
-                            this.sqs.deleteMessage({
+                            yield this.sqs.deleteMessage({
                                 QueueUrl: this.conf.sqsQueue,
                                 ReceiptHandle: msg.ReceiptHandle,
                             });

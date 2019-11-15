@@ -34,22 +34,21 @@ export class SqsWrapper<T> {
             if (this.sync) {
                 for (let msg of res.Messages || []) {
                     try {
-                        this.log.info('Receive message ', msg);
                         let jsonMsg: SqsMessageWrapper<T>|undefined = undefined;
                         try {
                             jsonMsg = JSON.parse(msg.Body!) as SqsMessageWrapper<T>;
                         } catch (e) {
                             this.log.error('listenForever: Error parsing message. Ignoring: ', msg);
                         }
-                        if (jsonMsg && jsonMsg.version === this.version && jsonMsg.messageId === this.messageId) {
+                        if (jsonMsg && jsonMsg.version == this.version && jsonMsg.messageId === this.messageId) {
                             await this._onMessage!((JSON.parse(msg.Body!) ).data);
                         } else if (!!jsonMsg) {
                             this.log.error(
                                 `Received and invalid message; igonring. Expected: ${this.messageId}@${this.version}` +
-                                ` but received: ${jsonMsg!.messageId}@${jsonMsg.version}`
+                                ` but received: ${jsonMsg!.messageId}@${jsonMsg.version}: `, msg
                             );
                         }
-                        this.sqs.deleteMessage({
+                        await this.sqs.deleteMessage({
                             QueueUrl: this.conf.sqsQueue,
                             ReceiptHandle: msg.ReceiptHandle,
                         } as DeleteMessageRequest);
