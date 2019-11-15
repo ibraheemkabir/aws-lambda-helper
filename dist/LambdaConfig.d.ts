@@ -5,7 +5,7 @@ export interface AwsConfig {
      * The endpoint URI to send requests to. The default endpoint is built from the configured region.
      * The endpoint should be a string like 'https://{service}.{region}.amazonaws.com'.
      */
-    endpoint?: string;
+    region?: string;
     sqsQueue?: string;
 }
 export declare class LambdaConfig implements Injectable {
