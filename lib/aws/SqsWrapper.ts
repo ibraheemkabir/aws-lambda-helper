@@ -13,14 +13,16 @@ export interface SqsMessageWrapper<T> {
 }
 
 export class SqsWrapper<T> {
-    private readonly sqs: SQS;
     private _onMessage : ((v: T) => Promise<void>) | undefined = undefined;
-    constructor(private conf: AwsConfig, private sync: boolean, private version: string, private messageId: string) {
-        this.sqs = new SQS({ endpoint: conf.endpoint });
+    constructor(private conf: AwsConfig,
+                private sqs: SQS,
+                private sync: boolean,
+                private version: string,
+                private messageId: string) {
     }
 
     async listenForever(cancellationToken: ListenerCancellation): Promise<void> {
-        while (cancellationToken.cancelled) {
+        while (!cancellationToken.cancelled) {
             const res = await this.sqs.receiveMessage({
                 QueueUrl: this.conf.sqsQueue,
                 WaitTimeSeconds: 10,
