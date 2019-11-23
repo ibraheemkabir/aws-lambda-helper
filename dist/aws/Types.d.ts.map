@@ -1,0 +1,1 @@
+{"version":3,"file":"Types.d.ts","sourceRoot":"","sources":["../../lib/aws/Types.ts"],"names":[],"mappings":"AACA,qBAAa,OAAO;IAChB,MAAM,CAAC,QAAQ,CAAC,kBAAkB,wBAAwB;IAC1D,MAAM,CAAC,QAAQ,CAAC,qBAAqB,qBAAqB;IAC1D,MAAM,CAAC,QAAQ,CAAC,iBAAiB,uBAAuB;IACxD,MAAM,CAAC,QAAQ,CAAC,qBAAqB,2BAA2B;CACnE"}
