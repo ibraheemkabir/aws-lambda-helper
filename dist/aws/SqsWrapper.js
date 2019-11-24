@@ -67,10 +67,10 @@ class SqsWrapper {
                 messageId: this.messageId,
                 version: this.version,
             };
-            this.sqs.sendMessage({
+            yield this.sqs.sendMessage({
                 QueueUrl: this.conf.sqsQueue,
                 MessageBody: JSON.stringify(wrappedMessage),
-            });
+            }).promise();
         });
     }
     listen(fun) {

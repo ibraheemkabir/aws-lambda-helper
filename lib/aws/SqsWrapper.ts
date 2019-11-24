@@ -71,10 +71,10 @@ export class SqsWrapper<T> {
             messageId: this.messageId,
             version: this.version,
         } as SqsMessageWrapper<T>;
-        this.sqs.sendMessage({
+        await this.sqs.sendMessage({
             QueueUrl: this.conf.sqsQueue,
             MessageBody: JSON.stringify(wrappedMessage),
-        } as SendMessageRequest);
+        } as SendMessageRequest).promise();
     }
 
     listen(fun: (v: T) => Promise<void>) {
