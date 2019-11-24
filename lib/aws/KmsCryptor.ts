@@ -2,14 +2,14 @@ import {
     hexToArrayBuffer,
     KeyEncryptionProvider,
     WebNativeCryptor,
-    arrayBufferToHex
+    arrayBufferToHex, Algo
 } from 'ferrum-crypto';
 import {HexString, Injectable, InternalReactNativeEncryptedKey} from "ferrum-plumbing";
 import {KMS} from 'aws-sdk';
 import { DecryptRequest, GenerateDataKeyResponse, DecryptResponse } from "aws-sdk/clients/kms";
 
 export class KmsCryptor extends WebNativeCryptor implements Injectable {
-    constructor(private kms: KMS) {
+    constructor(private kms: KMS, private cmkKeyId: string) {
         super({} as KeyEncryptionProvider);
     }
 
@@ -24,9 +24,10 @@ export class KmsCryptor extends WebNativeCryptor implements Injectable {
 
     protected async newKey(overrideKey?: HexString):
         Promise<{ encryptedKey: HexString, keyId: string, unEncrypedKey: string }> {
-        const encKey = await this.kms.generateDataKey().promise() as GenerateDataKeyResponse;
-        const encKeyHex = arrayBufferToHex(encKey.Plaintext as Uint8Array);
-        const unEncryptedKey = arrayBufferToHex(encKey.CiphertextBlob as Uint8Array);
-        return { encryptedKey: encKeyHex, keyId: '', unEncrypedKey: unEncryptedKey };
+        const encKey = await this.kms.generateDataKey(
+            { KeyId: this.cmkKeyId, NumberOfBytes: Algo.SIZES.KEY_SIZE, }).promise() as GenerateDataKeyResponse;
+        const unEncryptedKey = arrayBufferToHex(encKey.Plaintext as Uint8Array);
+        const encKeyHex = arrayBufferToHex(encKey.CiphertextBlob as Uint8Array);
+        return { encryptedKey: encKeyHex, keyId: this.cmkKeyId, unEncrypedKey: unEncryptedKey };
     }
 }

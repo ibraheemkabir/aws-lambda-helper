@@ -3,7 +3,8 @@ import { HexString, Injectable, InternalReactNativeEncryptedKey } from "ferrum-p
 import { KMS } from 'aws-sdk';
 export declare class KmsCryptor extends WebNativeCryptor implements Injectable {
     private kms;
-    constructor(kms: KMS);
+    private cmkKeyId;
+    constructor(kms: KMS, cmkKeyId: string);
     __name__(): string;
     protected decryptKey(key: InternalReactNativeEncryptedKey, overrideKey?: HexString): Promise<string>;
     protected newKey(overrideKey?: HexString): Promise<{

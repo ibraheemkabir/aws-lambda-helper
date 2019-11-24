@@ -10,9 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const ferrum_crypto_1 = require("ferrum-crypto");
 class KmsCryptor extends ferrum_crypto_1.WebNativeCryptor {
-    constructor(kms) {
+    constructor(kms, cmkKeyId) {
         super({});
         this.kms = kms;
+        this.cmkKeyId = cmkKeyId;
     }
     __name__() { return 'KmsCryptor'; }
     decryptKey(key, overrideKey) {
@@ -25,10 +26,10 @@ class KmsCryptor extends ferrum_crypto_1.WebNativeCryptor {
     }
     newKey(overrideKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            const encKey = yield this.kms.generateDataKey().promise();
-            const encKeyHex = ferrum_crypto_1.arrayBufferToHex(encKey.Plaintext);
-            const unEncryptedKey = ferrum_crypto_1.arrayBufferToHex(encKey.CiphertextBlob);
-            return { encryptedKey: encKeyHex, keyId: '', unEncrypedKey: unEncryptedKey };
+            const encKey = yield this.kms.generateDataKey({ KeyId: this.cmkKeyId, NumberOfBytes: ferrum_crypto_1.Algo.SIZES.KEY_SIZE, }).promise();
+            const unEncryptedKey = ferrum_crypto_1.arrayBufferToHex(encKey.Plaintext);
+            const encKeyHex = ferrum_crypto_1.arrayBufferToHex(encKey.CiphertextBlob);
+            return { encryptedKey: encKeyHex, keyId: this.cmkKeyId, unEncrypedKey: unEncryptedKey };
         });
     }
 }
