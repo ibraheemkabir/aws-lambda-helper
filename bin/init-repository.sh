@@ -17,8 +17,8 @@ fi
 # Files to copy to the target dir: package.json, tsconfig.json, webpack.config.js, src/index.ts, index.test.ts, handler.test.ts
 # tslint.json, babel.config.js
 
-to_copy="./package.json ./tsconfig.json tsconfig.json tslint.json webpack.config.js babel.config.js src/index.ts"
-to_copy_src="index.ts index.test.ts handler.test.ts"
+to_copy="./package.json ./tsconfig.json tsconfig.json tslint.json webpack.config.js babel.config.js"
+to_copy_src="index.ts index.test.ts handler.test.ts JsonRpcHttpHandler.ts"
 to_copy_bin="deploy.sh"
 
 base="./lambda_template"
