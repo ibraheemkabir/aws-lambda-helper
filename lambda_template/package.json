@@ -32,6 +32,7 @@
     "aws-sdk": "^2.572.0",
     "ferrum-crypto": "git+https://github.com/ferrumnet/ferrum-crypto.git",
     "ferrum-plumbing": "git+https://github.com/ferrumnet/ferrum-plumbing.git",
+    "aws-lambda-helper": "git+https://github.com/ferrumnet/aws-lambda-helper.git",
     "mongoose": "^5.7.7"
   }
 }
