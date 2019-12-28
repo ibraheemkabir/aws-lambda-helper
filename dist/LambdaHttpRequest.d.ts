@@ -1,6 +1,7 @@
+import { JsonRpcRequest } from "ferrum-plumbing";
 export interface LambdaHttpResponse {
     'isBase64Encoded': boolean;
-    'statusCode': 200 | 400 | 500;
+    'statusCode': 200 | 400 | 401 | 500;
     'headers': any;
     'body': any;
 }
@@ -56,5 +57,9 @@ export interface LambdaHttpRequest {
     'stageVariables': any;
     'isBase64Encoded': boolean;
     'body': string;
+}
+export interface JsonRpcProxyRequest extends JsonRpcRequest {
+    userProfile: any;
+    policyData: any;
 }
 //# sourceMappingURL=LambdaHttpRequest.d.ts.map

@@ -1,7 +1,7 @@
-import {EchoHttpHandler, PingPongSqsHandler} from '.';
+import {EchoHttpHandler, BasicSqsHandler} from '.';
 import {SQS} from 'aws-sdk';
-import {SendMessageRequest} from "aws-sdk/clients/sqs";
-import {LambdaConfig, LambdaHttpRequest, LambdaSqsRequest} from "aws-lambda-helper";
+import {SendMessageRequest} from 'aws-sdk/clients/sqs';
+import {LambdaConfig, LambdaHttpRequest, LambdaSqsRequest} from 'aws-lambda-helper';
 
 jest.mock('./lib/LambdaConfig', () => ({
     LambdaConfig: jest.fn().mockImplementation()
@@ -43,7 +43,7 @@ test('test PingPongSqsHandler, sqs ping generates a pong', async () => {
         ]
     } as LambdaSqsRequest;
     const mockSqs = new SQS() as any;
-    const obj = new PingPongSqsHandler(new LambdaConfig(jest.fn().mockImplementation() as any), mockSqs)
+    const obj = new BasicSqsHandler(new LambdaConfig(jest.fn().mockImplementation() as any), mockSqs)
     await obj.handle(req, {});
     // Ensure sqs.sendMessage is called
     expect(mockSqs.msg).toMatchObject<SendMessageRequest>({

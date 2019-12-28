@@ -1,4 +1,3 @@
-import {SQS, config} from 'aws-sdk';
 import {
     Container,
     Injectable,
@@ -6,16 +5,32 @@ import {
     LambdaGlobalContext,
     LambdaHttpRequest,
     LambdaHttpResposne,
-    LambdaSqsRequest, Module
-} from "aws-lambda-helper/dist";
-import {LambdaHttpHandler, LambdaSqsHandler} from "aws-lambda-helper/dist/HandlerFactory";
+    LambdaSqsRequest,
+    Module,
+    LambdaHttpHandler,
+    LambdaSqsHandler
+} from 'aws-lambda-helper';
+import {ConsoleLogger, Logger, LoggerFactory} from "ferrum-plumbing";
+// import {AwsEnvs} from "../../lib/aws/Types";
+// import {SecretsProvider} from "../../lib/aws/SecretsProvider";
+// import {SecretAuthProvider} from "ferrum-plumbing";
+// import {KmsCryptor} from "../../lib/aws/KmsCryptor";
+
+class ContainerProvider {
+    static _container: Container|undefined = undefined;
+
+    static async container(){
+        if (!ContainerProvider._container) {
+            ContainerProvider._container = await LambdaGlobalContext.container();
+            await ContainerProvider._container.registerModule(new MyLambdaModule()); // Change this to your defined module
+        }
+        return ContainerProvider._container;
+    }
+}
 
 // Once registered this is the handler code for lambda_template
 export async function handler(event: any, context: any) {
-    const container = await LambdaGlobalContext.container();
-
-    await container.registerModule(new MyLambdaModule()); // Change this to your defined module
-
+    const container = await ContainerProvider.container();
     const lgc = container.get<LambdaGlobalContext>(LambdaGlobalContext);
     return await lgc.handleAsync(event, context);
 }
@@ -35,43 +50,44 @@ export class EchoHttpHandler implements LambdaHttpHandler {
 }
 
 // Implement your specific handlers in a separate file
-export class PingPongSqsHandler implements LambdaSqsHandler, Injectable {
-    constructor(private lambdaConfig: LambdaConfig, private sqs: SQS) {
+export class BasicSqsHandler implements LambdaSqsHandler, Injectable {
+    constructor(private log: Logger) {
     }
 
     async handle(request: LambdaSqsRequest, context: any) {
         const rec = request.Records[0];
-        // @ts-ignore
-        console.log('Received SQS message ', rec);
         const { message, count } = JSON.parse(rec.body) as any;
         if (!message || !count) {
             // @ts-ignore
-            console.error('PingPongSqsHandler.handle', request);
+            this.log.error('handle:', request);
             throw new Error('No message found in the SQS request');
         }
-
-        if (count > 10) {
-            console.log('Already submitted 10 messages. Time to end the party!');
-            return;
-        }
-
-        config.update({region: rec.awsRegion});
-        await this.sqs.sendMessage({
-            DelaySeconds: 2,
-            QueueUrl: this.lambdaConfig.sqsQueueUrl!,
-            MessageBody: JSON.stringify({ message: message === 'ping' ? 'pong' : 'ping', count: count + 1 }),
-        }, (r: any) => r).promise();
+        // @ts-ignore
+        this.log.info('Received SQS message ', rec);
     }
 
     __name__(): string {
-        return 'PingPongSqsHandler';
+        return 'BasicSqsHandler';
     }
 }
 
 export class MyLambdaModule implements Module {
     async configAsync(container: Container) {
+        container.register(LoggerFactory, c => new LoggerFactory(cn => new ConsoleLogger(cn)));
+
         container.register('LambdaHttpHandler', () => new EchoHttpHandler());
-        container.register("LambdaSqsHandler",
-                c => new PingPongSqsHandler(c.get(LambdaConfig), c.get('SQS')));
+        container.register("LambdaSqsHandler", c => new BasicSqsHandler(c.get(LambdaConfig),
+            c.get<LoggerFactory>(LoggerFactory).getLogger(BasicSqsHandler)));
+
+        // Uncomment to use a typical JSON RPC setup
+        // const region = process.env[AwsEnvs.AWS_DEFAULT_REGION] || 'us-east-2';
+        // const secretConfArn = getEnv(AwsEnvs.AWS_SECRET_ARN_PREFIX + 'YOUR_CUSTOM_SUFFIX');
+        // const config = await new SecretsProvider(region, secretConfArn).get() as any;
+        // container.register('LambdaHttpHandler',
+        //     c => new JsonRpcHttpHandler(c.get(JsonRpcHttpHandler),new SecretAuthProvider(config.secret)));
+
+        // Unocomment this if you need encryption
+        // container.register('KMS', () => new KMS({region}));
+        // container.register(KmsCryptor, c => new KmsCryptor(c.get('KMS'), config.cmkKeyArn));
     }
 }
