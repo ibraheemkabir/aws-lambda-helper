@@ -6,9 +6,9 @@ import {
 } from 'ferrum-crypto';
 import {HexString, Injectable, InternalReactNativeEncryptedKey} from "ferrum-plumbing";
 import {KMS} from 'aws-sdk';
-import { DecryptRequest, GenerateDataKeyResponse, DecryptResponse } from "aws-sdk/clients/kms";
+import {DecryptRequest, GenerateDataKeyResponse, DecryptResponse, GenerateRandomRequest} from "aws-sdk/clients/kms";
 
-export class KmsCryptor extends WebNativeCryptor implements Injectable {
+export class KmsCryptor extends WebNativeCryptor implements Injectable, KeyEncryptionProvider {
     constructor(private kms: KMS, private cmkKeyId: string) {
         super({} as KeyEncryptionProvider);
     }
@@ -29,5 +29,21 @@ export class KmsCryptor extends WebNativeCryptor implements Injectable {
         const unEncryptedKey = arrayBufferToHex(encKey.Plaintext as Uint8Array);
         const encKeyHex = arrayBufferToHex(encKey.CiphertextBlob as Uint8Array);
         return { encryptedKey: encKeyHex, keyId: this.cmkKeyId, unEncrypedKey: unEncryptedKey };
+    }
+
+    getKey(keyId?: string): string {
+        return '';
+    }
+
+    newKeyId(): string {
+        return this.cmkKeyId;
+    }
+
+    async randomHex(keySize?: number): Promise<HexString> {
+        const res = await this.kms.generateRandom({
+            CustomKeyStoreId: this.cmkKeyId,
+            NumberOfBytes: 32,
+        } as GenerateRandomRequest).promise();
+        return arrayBufferToHex(res.Plaintext as Uint8Array);
     }
 }

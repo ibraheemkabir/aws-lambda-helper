@@ -32,6 +32,21 @@ class KmsCryptor extends ferrum_crypto_1.WebNativeCryptor {
             return { encryptedKey: encKeyHex, keyId: this.cmkKeyId, unEncrypedKey: unEncryptedKey };
         });
     }
+    getKey(keyId) {
+        return '';
+    }
+    newKeyId() {
+        return this.cmkKeyId;
+    }
+    randomHex(keySize) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield this.kms.generateRandom({
+                CustomKeyStoreId: this.cmkKeyId,
+                NumberOfBytes: 32,
+            }).promise();
+            return ferrum_crypto_1.arrayBufferToHex(res.Plaintext);
+        });
+    }
 }
 exports.KmsCryptor = KmsCryptor;
 //# sourceMappingURL=KmsCryptor.js.map

@@ -9,4 +9,5 @@ export * from './aws/SecretsProvider';
 export * from './aws/Types';
 export * from './dataLayer/mongoose/MongooseConnector';
 export * from './dataLayer/mongoose/Types';
+export * from './dataLayer/secure/SecureDataStorageBase';
 //# sourceMappingURL=index.d.ts.map

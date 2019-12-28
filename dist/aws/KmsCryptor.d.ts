@@ -1,7 +1,7 @@
-import { WebNativeCryptor } from 'ferrum-crypto';
+import { KeyEncryptionProvider, WebNativeCryptor } from 'ferrum-crypto';
 import { HexString, Injectable, InternalReactNativeEncryptedKey } from "ferrum-plumbing";
 import { KMS } from 'aws-sdk';
-export declare class KmsCryptor extends WebNativeCryptor implements Injectable {
+export declare class KmsCryptor extends WebNativeCryptor implements Injectable, KeyEncryptionProvider {
     private kms;
     private cmkKeyId;
     constructor(kms: KMS, cmkKeyId: string);
@@ -12,5 +12,8 @@ export declare class KmsCryptor extends WebNativeCryptor implements Injectable {
         keyId: string;
         unEncrypedKey: string;
     }>;
+    getKey(keyId?: string): string;
+    newKeyId(): string;
+    randomHex(keySize?: number): Promise<HexString>;
 }
 //# sourceMappingURL=KmsCryptor.d.ts.map
