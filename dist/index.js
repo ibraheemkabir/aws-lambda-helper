@@ -5,6 +5,7 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./LambdaConfig"));
 __export(require("./LambdaGlobalContext"));
+__export(require("./HandlerFactory"));
 __export(require("./aws/KmsCryptor"));
 __export(require("./aws/SqsWrapper"));
 __export(require("./aws/SecretsProvider"));

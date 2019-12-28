@@ -13,22 +13,27 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "ts-loader": "^6.0.4",
-    "tslint-config-airbnb-base": "^0.3.0",
-    "typescript": "^3.5.3",
-    "webpack": "^4.36.1",
-    "webpack-cli": "^3.3.6"
-  },
-  "dependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-typescript": "^7.3.3",
     "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^24.0.13",
-    "aws-lambda-helper": "git+https://github.com/ferrumnet/aws-lambda-helper.git",
-    "aws-sdk": "^2.496.0",
+    "@types/mongodb": "^3.3.6",
+    "@types/mongoose": "^5.5.23",
+    "@types/node": "^12.6.8",
+    "@types/node-fetch": "^2.5.0",
     "babel-jest": "^24.8.0",
     "jest": "^24.8.0",
+    "ts-loader": "^6.0.4",
+    "tslint": "^5.0.0",
+    "tslint-config-airbnb-base": "^0.3.0",
+    "typescript": "^3.5.3",
     "webpack-babel-jest": "^1.0.4"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.572.0",
+    "ferrum-crypto": "git+https://github.com/ferrumnet/ferrum-crypto.git",
+    "ferrum-plumbing": "git+https://github.com/ferrumnet/ferrum-plumbing.git",
+    "mongoose": "^5.7.7"
   }
 }

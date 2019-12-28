@@ -1,6 +1,5 @@
 import {AuthenticationVerifyer, ValidationUtils} from "ferrum-plumbing";
-import {JsonRpcProxyRequest, LambdaHttpRequest, LambdaHttpResponse} from "../../lib/LambdaHttpRequest";
-import {LambdaHttpHandler} from "../../lib/HandlerFactory";
+import {JsonRpcProxyRequest, LambdaHttpRequest, LambdaHttpResponse, LambdaHttpHandler,} from "aws-lambda-helper";
 
 function asRequest(body: any | string): JsonRpcProxyRequest {
     return (typeof body === 'string') ? JSON.parse(body) : body;

@@ -1,20 +1,11 @@
 import {
-    Container,
-    Injectable,
-    LambdaConfig,
     LambdaGlobalContext,
-    LambdaHttpRequest,
-    LambdaHttpResposne,
+    AwsEnvs, SecretsProvider, KmsCryptor, LambdaHttpHandler, LambdaHttpRequest, LambdaHttpResposne, LambdaSqsHandler,
     LambdaSqsRequest,
-    Module,
-    LambdaHttpHandler,
-    LambdaSqsHandler
 } from 'aws-lambda-helper';
-import {ConsoleLogger, Logger, LoggerFactory} from "ferrum-plumbing";
-// import {AwsEnvs} from "../../lib/aws/Types";
-// import {SecretsProvider} from "../../lib/aws/SecretsProvider";
-// import {SecretAuthProvider} from "ferrum-plumbing";
-// import {KmsCryptor} from "../../lib/aws/KmsCryptor";
+import {ConsoleLogger, Logger, LoggerFactory, SecretAuthProvider, Container, Injectable, Module,} from "ferrum-plumbing";
+import {JsonRpcHttpHandler} from "./JsonRpcHttpHandler";
+import { KMS } from 'aws-sdk';
 
 class ContainerProvider {
     static _container: Container|undefined = undefined;
@@ -76,7 +67,7 @@ export class MyLambdaModule implements Module {
         container.register(LoggerFactory, c => new LoggerFactory(cn => new ConsoleLogger(cn)));
 
         container.register('LambdaHttpHandler', () => new EchoHttpHandler());
-        container.register("LambdaSqsHandler", c => new BasicSqsHandler(c.get(LambdaConfig),
+        container.register("LambdaSqsHandler", c => new BasicSqsHandler(
             c.get<LoggerFactory>(LoggerFactory).getLogger(BasicSqsHandler)));
 
         // Uncomment to use a typical JSON RPC setup
