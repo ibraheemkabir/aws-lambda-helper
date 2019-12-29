@@ -11,7 +11,7 @@ export interface SecureDataStorageItem {
 export declare function secureDataStorageItemSchemaFactory<T>(unsecSchema: T): Schema<SecureDataStorageItem & T>;
 export declare abstract class SecureDataStorageBase<SecT, UnsecT> extends MongooseConnection implements JsonStorage {
     private cryptor;
-    protected model: Model<SecureDataStorageItem & UnsecT & Document> | undefined;
+    private model;
     protected constructor(cryptor: KmsCryptor);
     load(key: string): Promise<any>;
     save(key: string, val: any): Promise<void>;
@@ -19,6 +19,7 @@ export declare abstract class SecureDataStorageBase<SecT, UnsecT> extends Mongoo
     get(key: string): Promise<SecT & UnsecT | undefined>;
     create(key: string, unsecureData: UnsecT, secureData: SecT): Promise<SecureDataStorageItem & UnsecT>;
     update(key: string, unsecureData: UnsecT, secureData: SecT): Promise<SecureDataStorageItem & UnsecT>;
+    protected setModel(m: Model<SecureDataStorageItem & UnsecT & Document>): void;
     private validateDataToWrite;
 }
 //# sourceMappingURL=SecureDataStorageBase.d.ts.map

@@ -68,6 +68,9 @@ class SecureDataStorageBase extends MongooseConnector_1.MongooseConnection {
             return yield new this.model(data).updateOne(data, { key }).exec();
         });
     }
+    setModel(m) {
+        this.model = m;
+    }
     validateDataToWrite(key, unsecureData, secureData) {
         this.verifyInit();
         ferrum_plumbing_1.ValidationUtils.isTrue(!!key, 'Key must be provided');

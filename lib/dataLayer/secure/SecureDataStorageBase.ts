@@ -22,7 +22,7 @@ export function secureDataStorageItemSchemaFactory<T>(unsecSchema: T) {
 }
 
 export abstract class SecureDataStorageBase<SecT, UnsecT> extends MongooseConnection implements JsonStorage {
-    protected model: Model<SecureDataStorageItem & UnsecT & Document> | undefined;
+    private model: Model<SecureDataStorageItem & UnsecT & Document> | undefined;
     protected constructor(private cryptor: KmsCryptor) {
         super();
     }
@@ -79,6 +79,10 @@ export abstract class SecureDataStorageBase<SecT, UnsecT> extends MongooseConnec
             lastUpdatedAt: Date.now(),
         } as SecureDataStorageItem & UnsecT;
         return await new this.model!(data).updateOne(data, {key}).exec();
+    }
+
+    protected setModel(m: Model<SecureDataStorageItem & UnsecT & Document>) {
+        this.model = m;
     }
 
     private validateDataToWrite(key: string, unsecureData: UnsecT, secureData: SecT): [any, string] {
