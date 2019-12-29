@@ -22,4 +22,13 @@ test('encrypt data', function () {
         expect(clean).toBe('Some text');
     });
 });
+test('random hex', function () {
+    return __awaiter(this, void 0, void 0, function* () {
+        jest.setTimeout(100000);
+        const cryptor = new KmsCryptor_1.KmsCryptor(new aws_sdk_1.KMS({ region: 'us-east-2' }), 'arn:aws:kms:us-east-2:181310517868:key/5600dedc-7db1-4b7e-9f64-022efb53d6f1');
+        const sk = yield cryptor.randomHex();
+        console.log('Random hex: ', sk);
+        expect(sk).toBeTruthy();
+    });
+});
 //# sourceMappingURL=KmsCryptor.test.js.map
