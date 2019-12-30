@@ -41,7 +41,7 @@ export class KmsCryptor extends WebNativeCryptor implements Injectable, KeyEncry
 
     async randomHex(keySize?: number): Promise<HexString> {
         const res = await this.kms.generateRandom({
-            NumberOfBytes: 32,
+            NumberOfBytes: keySize || 32,
         } as GenerateRandomRequest).promise();
         return arrayBufferToHex(res.Plaintext as Uint8Array);
     }
