@@ -29,7 +29,7 @@ class LambdaGlobalModule {
             container.register(aws_sdk_1.SNS, () => new aws_sdk_1.SNS({ region: process.env[Types_1.AwsEnvs.AWS_DEFAULT_REGION] }));
             container.register(aws_sdk_1.KMS, () => new aws_sdk_1.KMS({ region: process.env[Types_1.AwsEnvs.AWS_DEFAULT_REGION] }));
             container.register(LambdaConfig_1.LambdaConfig, () => config);
-            container.register(HandlerFactory_1.HandlerFactory, c => new HandlerFactory_1.HandlerFactory(c.get('LambdaSqsHandler'), c.get('LambdaHttpHandler')));
+            container.registerLifecycleParent(HandlerFactory_1.HandlerFactory, c => new HandlerFactory_1.HandlerFactory(c.get('LambdaSqsHandler'), c.get('LambdaHttpHandler')));
             container.register(LambdaGlobalContext_1.LambdaGlobalContext, c => new LambdaGlobalContext_1.LambdaGlobalContext(c.get(HandlerFactory_1.HandlerFactory)));
         });
     }

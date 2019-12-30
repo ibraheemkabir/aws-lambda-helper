@@ -19,7 +19,7 @@ export class LambdaGlobalModule implements Module {
     container.register(SNS, () => new SNS({region: process.env[AwsEnvs.AWS_DEFAULT_REGION]}));
     container.register(KMS, () => new KMS({region: process.env[AwsEnvs.AWS_DEFAULT_REGION]}));
     container.register(LambdaConfig, () => config);
-    container.register(HandlerFactory,
+    container.registerLifecycleParent(HandlerFactory,
       c => new HandlerFactory(c.get('LambdaSqsHandler'), c.get('LambdaHttpHandler')));
     container.register(LambdaGlobalContext, c => new LambdaGlobalContext(c.get(HandlerFactory)));
   }
