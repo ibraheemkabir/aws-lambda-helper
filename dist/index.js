@@ -12,4 +12,5 @@ __export(require("./aws/SecretsProvider"));
 __export(require("./aws/Types"));
 __export(require("./dataLayer/mongoose/MongooseConnector"));
 __export(require("./dataLayer/secure/SecureDataStorageBase"));
+__export(require("./debug/SimulateLambda"));
 //# sourceMappingURL=index.js.map
