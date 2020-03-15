@@ -9,6 +9,7 @@ __export(require("./HandlerFactory"));
 __export(require("./aws/KmsCryptor"));
 __export(require("./aws/SqsWrapper"));
 __export(require("./aws/SecretsProvider"));
+__export(require("./aws/CloudWatchClient"));
 __export(require("./aws/Types"));
 __export(require("./dataLayer/mongoose/MongooseConnector"));
 __export(require("./dataLayer/secure/SecureDataStorageBase"));

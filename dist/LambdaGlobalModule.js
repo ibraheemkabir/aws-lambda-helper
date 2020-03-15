@@ -26,8 +26,10 @@ class LambdaGlobalModule {
             ferrum_plumbing_1.makeInjectable('KMS', aws_sdk_1.KMS);
             container.register(aws_sdk_1.SQS, () => new aws_sdk_1.SQS({ region: process.env[Types_1.AwsEnvs.AWS_DEFAULT_REGION] }));
             ferrum_plumbing_1.makeInjectable('SNS', aws_sdk_1.SNS);
+            ferrum_plumbing_1.makeInjectable('CloudWatch', aws_sdk_1.CloudWatch);
             container.register(aws_sdk_1.SNS, () => new aws_sdk_1.SNS({ region: process.env[Types_1.AwsEnvs.AWS_DEFAULT_REGION] }));
             container.register(aws_sdk_1.KMS, () => new aws_sdk_1.KMS({ region: process.env[Types_1.AwsEnvs.AWS_DEFAULT_REGION] }));
+            container.register(aws_sdk_1.CloudWatch, () => new aws_sdk_1.CloudWatch({ region: process.env[Types_1.AwsEnvs.AWS_DEFAULT_REGION] }));
             container.register(LambdaConfig_1.LambdaConfig, () => config);
             container.registerLifecycleParent(HandlerFactory_1.HandlerFactory, c => new HandlerFactory_1.HandlerFactory(c.get('LambdaSqsHandler'), c.get('LambdaHttpHandler')));
             container.register(LambdaGlobalContext_1.LambdaGlobalContext, c => new LambdaGlobalContext_1.LambdaGlobalContext(c.get(HandlerFactory_1.HandlerFactory)));
