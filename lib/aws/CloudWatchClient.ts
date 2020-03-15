@@ -10,14 +10,18 @@ export class CloudWatchClient implements Injectable, MetricsUploader {
   __name__(): string { return 'CloudWatchClient'; }
 
   async uploadMetrics(metrics: Metric[]) {
-    await this.cw.putMetricData({
-      Namespace: 'Ferrum',
+    if (!metrics || !metrics.length) {
+      return;
+    }
+    const req = {
+      Namespace: 'Ferrum/ChainNodeWatcher',
       MetricData: metrics.map(m => ({
         Dimensions: this.dimensions,
         MetricName: m.key,
         Value: (m as ScalarMetric).count,
         Unit: m.unit,
-      } as MetricDatum))
-    } as PutMetricDataInput).promise();
+      } as MetricDatum)),
+    } as PutMetricDataInput;
+    await this.cw.putMetricData(req).promise();
   }
 }

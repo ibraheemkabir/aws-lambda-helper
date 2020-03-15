@@ -16,15 +16,19 @@ class CloudWatchClient {
     __name__() { return 'CloudWatchClient'; }
     uploadMetrics(metrics) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.cw.putMetricData({
-                Namespace: 'Ferrum',
+            if (!metrics || !metrics.length) {
+                return;
+            }
+            const req = {
+                Namespace: 'Ferrum/ChainNodeWatcher',
                 MetricData: metrics.map(m => ({
                     Dimensions: this.dimensions,
                     MetricName: m.key,
                     Value: m.count,
                     Unit: m.unit,
-                }))
-            }).promise();
+                })),
+            };
+            yield this.cw.putMetricData(req).promise();
         });
     }
 }
