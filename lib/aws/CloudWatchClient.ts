@@ -4,7 +4,9 @@ import {Metric, ScalarMetric} from "ferrum-plumbing/dist/monitoring/Types";
 import {Dimension, MetricDatum, PutMetricDataInput} from "aws-sdk/clients/cloudwatch";
 
 export class CloudWatchClient implements Injectable, MetricsUploader {
-  constructor(private cw: CloudWatch, private dimensions: Dimension[]) {
+  constructor(private cw: CloudWatch, private namespace: string, private dimensions: Dimension[]) {
+    this.namespace = `Ferrum/${namespace}`;
+    this.uploadMetrics = this.uploadMetrics.bind(this);
   }
 
   __name__(): string { return 'CloudWatchClient'; }
@@ -14,7 +16,7 @@ export class CloudWatchClient implements Injectable, MetricsUploader {
       return;
     }
     const req = {
-      Namespace: 'Ferrum/ChainNodeWatcher',
+      Namespace: this.namespace,
       MetricData: metrics.map(m => ({
         Dimensions: this.dimensions,
         MetricName: m.key,

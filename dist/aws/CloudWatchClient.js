@@ -9,9 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class CloudWatchClient {
-    constructor(cw, dimensions) {
+    constructor(cw, namespace, dimensions) {
         this.cw = cw;
+        this.namespace = namespace;
         this.dimensions = dimensions;
+        this.namespace = `Ferrum/${namespace}`;
+        this.uploadMetrics = this.uploadMetrics.bind(this);
     }
     __name__() { return 'CloudWatchClient'; }
     uploadMetrics(metrics) {
@@ -20,7 +23,7 @@ class CloudWatchClient {
                 return;
             }
             const req = {
-                Namespace: 'Ferrum/ChainNodeWatcher',
+                Namespace: this.namespace,
                 MetricData: metrics.map(m => ({
                     Dimensions: this.dimensions,
                     MetricName: m.key,
