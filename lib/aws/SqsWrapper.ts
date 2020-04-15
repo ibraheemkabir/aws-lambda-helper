@@ -21,6 +21,8 @@ export class SqsWrapper<T> {
                 private version: string,
                 private messageId: string) {
         this.log = loggerFactory.getLogger('SqsWrapper');
+        this._fetch = this._fetch.bind(this);
+        this.startPeriodicalFetch = this.startPeriodicalFetch.bind(this);
     }
 
     async startPeriodicalFetch(scheduler: LongRunningScheduler): Promise<void> {

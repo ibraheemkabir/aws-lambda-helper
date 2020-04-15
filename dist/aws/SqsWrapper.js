@@ -18,6 +18,8 @@ class SqsWrapper {
         this._onMessage = undefined;
         this.id = (1000000 + Math.random() * 999999).toString();
         this.log = loggerFactory.getLogger('SqsWrapper');
+        this._fetch = this._fetch.bind(this);
+        this.startPeriodicalFetch = this.startPeriodicalFetch.bind(this);
     }
     startPeriodicalFetch(scheduler) {
         return __awaiter(this, void 0, void 0, function* () {
