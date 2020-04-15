@@ -16,47 +16,56 @@ class SqsWrapper {
         this.version = version;
         this.messageId = messageId;
         this._onMessage = undefined;
+        this.id = (1000000 + Math.random() * 999999).toString();
         this.log = loggerFactory.getLogger('SqsWrapper');
     }
-    listenForever(cancellationToken) {
+    startPeriodicalFetch(scheduler) {
         return __awaiter(this, void 0, void 0, function* () {
-            while (!cancellationToken.cancelled) {
-                const res = yield this.sqs.receiveMessage({
-                    QueueUrl: this.conf.sqsQueue,
-                    WaitTimeSeconds: 10,
-                    VisibilityTimeout: 30,
-                }).promise();
-                if (this.sync) {
-                    for (let msg of res.Messages || []) {
+            const options = {
+                repeatPeriod: 11000,
+                logErrors: true,
+                retry: { count: 0 },
+            };
+            scheduler.schedulePeriodic(SqsWrapper.name, this._fetch, options);
+        });
+    }
+    _fetch() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield this.sqs.receiveMessage({
+                QueueUrl: this.conf.sqsQueue,
+                WaitTimeSeconds: 10,
+                VisibilityTimeout: 30,
+            }).promise();
+            if (this.sync) {
+                for (let msg of res.Messages || []) {
+                    try {
+                        let jsonMsg = undefined;
                         try {
-                            let jsonMsg = undefined;
-                            try {
-                                jsonMsg = JSON.parse(msg.Body);
-                            }
-                            catch (e) {
-                                this.log.error('listenForever: Error parsing message. Ignoring: ', msg);
-                            }
-                            if (jsonMsg && jsonMsg.version == this.version && jsonMsg.messageId === this.messageId) {
-                                yield this._onMessage((JSON.parse(msg.Body)).data);
-                            }
-                            else if (!!jsonMsg) {
-                                this.log.error(`Received and invalid message; ignoring. Expected: ${this.messageId}@${this.version}` +
-                                    ` but received: ${jsonMsg.messageId}@${jsonMsg.version}: `, msg);
-                            }
-                            yield this.sqs.deleteMessage({
-                                QueueUrl: this.conf.sqsQueue,
-                                ReceiptHandle: msg.ReceiptHandle,
-                            }).promise();
+                            jsonMsg = JSON.parse(msg.Body);
                         }
                         catch (e) {
-                            console.error('Error processing SQS message', e);
+                            this.log.error('listenForever: Error parsing message. Ignoring: ', msg);
                         }
+                        if (jsonMsg && jsonMsg.version == this.version && jsonMsg.messageId === this.messageId) {
+                            yield this._onMessage((JSON.parse(msg.Body)).data);
+                        }
+                        else if (!!jsonMsg) {
+                            this.log.error(`Received and invalid message; ignoring. Expected: ${this.messageId}@${this.version}` +
+                                ` but received: ${jsonMsg.messageId}@${jsonMsg.version}: `, msg);
+                        }
+                        yield this.sqs.deleteMessage({
+                            QueueUrl: this.conf.sqsQueue,
+                            ReceiptHandle: msg.ReceiptHandle,
+                        }).promise();
+                    }
+                    catch (e) {
+                        console.error('Error processing SQS message', e);
                     }
                 }
-                else {
-                    const results = (res.Messages || []).map(msg => this._onMessage(JSON.parse(msg.Body)));
-                    yield Promise.all(results);
-                }
+            }
+            else {
+                const results = (res.Messages || []).map(msg => this._onMessage(JSON.parse(msg.Body)));
+                yield Promise.all(results);
             }
         });
     }

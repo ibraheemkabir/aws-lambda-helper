@@ -1,9 +1,7 @@
 import { AwsConfig } from '../LambdaConfig';
 import { SQS } from 'aws-sdk';
 import { LoggerFactory } from 'ferrum-plumbing';
-export interface ListenerCancellation {
-    cancelled: boolean;
-}
+import { LongRunningScheduler } from "ferrum-plumbing/dist/scheduler/LongRunningScheduler";
 export interface SqsMessageWrapper<T> {
     version: string;
     messageId: string;
@@ -17,8 +15,10 @@ export declare class SqsWrapper<T> {
     private messageId;
     private _onMessage;
     private log;
+    private id;
     constructor(conf: AwsConfig, loggerFactory: LoggerFactory, sqs: SQS, sync: boolean, version: string, messageId: string);
-    listenForever(cancellationToken: ListenerCancellation): Promise<void>;
+    startPeriodicalFetch(scheduler: LongRunningScheduler): Promise<void>;
+    private _fetch;
     send(data: T): Promise<void>;
     listen(fun: (v: T) => Promise<void>): void;
 }
