@@ -5,7 +5,8 @@ import {Injectable, ValidationUtils} from "ferrum-plumbing";
 export abstract class MongooseConnection implements Injectable {
     private isInit: boolean = false;
     async init(config: MongooseConfig): Promise<void> {
-        const connStr = `mongodb://${config.user}:${config.pw}@${config.endpoint}/${config.database}`;
+        const connStr = config.connectionString ||
+            `mongodb://${config.user}:${config.pw}@${config.endpoint}/${config.database}`;
         const con = await createConnection(connStr);
         this.initModels(con);
         this.isInit = true;
