@@ -18,7 +18,9 @@ export declare class SqsWrapper<T> {
     private id;
     constructor(conf: AwsConfig, loggerFactory: LoggerFactory, sqs: SQS, sync: boolean, version: string, messageId: string);
     startPeriodicalFetch(scheduler: LongRunningScheduler): Promise<void>;
+    private onMessageWithTimeout;
     private _fetch;
+    private deleteMessage;
     send(data: T): Promise<void>;
     listen(fun: (v: T) => Promise<void>): void;
 }

@@ -16,7 +16,8 @@ class MongooseConnection {
     }
     init(config) {
         return __awaiter(this, void 0, void 0, function* () {
-            const connStr = `mongodb://${config.user}:${config.pw}@${config.endpoint}/${config.database}`;
+            const connStr = config.connectionString ||
+                `mongodb://${config.user}:${config.pw}@${config.endpoint}/${config.database}`;
             const con = yield mongoose_1.createConnection(connStr);
             this.initModels(con);
             this.isInit = true;
