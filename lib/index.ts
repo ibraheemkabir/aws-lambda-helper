@@ -13,6 +13,7 @@ export * from './dataLayer/mongoose/MongooseConnector';
 export * from './dataLayer/mongoose/Types';
 export * from './dataLayer/secure/SecureDataStorageBase';
 export * from './unifyre/UnifyreBackendProxyService';
+export * from './unifyre/UnifyreBackendProxyModule';
 
 export * from './debug/SimulateLambda';
 

@@ -14,5 +14,6 @@ __export(require("./aws/Types"));
 __export(require("./dataLayer/mongoose/MongooseConnector"));
 __export(require("./dataLayer/secure/SecureDataStorageBase"));
 __export(require("./unifyre/UnifyreBackendProxyService"));
+__export(require("./unifyre/UnifyreBackendProxyModule"));
 __export(require("./debug/SimulateLambda"));
 //# sourceMappingURL=index.js.map
