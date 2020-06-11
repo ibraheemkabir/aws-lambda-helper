@@ -18,6 +18,7 @@ class UnifyreBackendProxyService {
         this.unifyreKitFactory = unifyreKitFactory;
         this.jwtRandomKey = jwtRandomKey;
     }
+    __name__() { return 'UnifyreBackendProxyService'; }
     signInToServer(token, expiresIn) {
         return __awaiter(this, void 0, void 0, function* () {
             const uniKit = this.unifyreKitFactory();

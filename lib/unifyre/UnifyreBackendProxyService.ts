@@ -1,14 +1,16 @@
 import { UnifyreExtensionKitClient,  } from 'unifyre-extension-sdk';
 import { AppUserProfile } from 'unifyre-extension-sdk/dist/client/model/AppUserProfile';
-import { ValidationUtils } from 'ferrum-plumbing';
+import { ValidationUtils, Injectable } from 'ferrum-plumbing';
 import jwt from 'jsonwebtoken';
 
-export class UnifyreBackendProxyService {
+export class UnifyreBackendProxyService implements Injectable {
     constructor(
         private unifyreKitFactory: () => UnifyreExtensionKitClient,
         private jwtRandomKey: string,
     ) {
     }
+
+    __name__() { return 'UnifyreBackendProxyService'; }
 
     async signInToServer(token: string, expiresIn?: string): Promise<[AppUserProfile, string]> {
         const uniKit = this.unifyreKitFactory();
