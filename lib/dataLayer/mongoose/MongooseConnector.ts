@@ -2,6 +2,10 @@ import {Connection, createConnection} from 'mongoose';
 import {MongooseConfig} from "./Types";
 import {Injectable, ValidationUtils} from "ferrum-plumbing";
 
+mongoose.set('useFindAndModify', false);
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useUnifiedTopology', true);
+
 export abstract class MongooseConnection implements Injectable {
     private isInit: boolean = false;
     async init(config: MongooseConfig): Promise<void> {
