@@ -11,5 +11,6 @@ export * from './aws/Types';
 export * from './dataLayer/mongoose/MongooseConnector';
 export * from './dataLayer/mongoose/Types';
 export * from './dataLayer/secure/SecureDataStorageBase';
+export * from './unifyre/UnifyreBackendProxyService';
 export * from './debug/SimulateLambda';
 //# sourceMappingURL=index.d.ts.map

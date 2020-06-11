@@ -1,4 +1,4 @@
-import {Connection, createConnection} from 'mongoose';
+import mongoose, {Connection, createConnection} from 'mongoose';
 import {MongooseConfig} from "./Types";
 import {Injectable, ValidationUtils} from "ferrum-plumbing";
 
