@@ -12,13 +12,15 @@ const UnifyreBackendProxyService_1 = require("./UnifyreBackendProxyService");
 const unifyre_extension_sdk_1 = require("unifyre-extension-sdk");
 const WalletJsonRpcClient_1 = require("unifyre-extension-sdk/dist/client/WalletJsonRpcClient");
 class UnifyreBackendProxyModule {
-    constructor(wyreAppId, randomKey) {
+    constructor(wyreAppId, randomKey, signingKey) {
         this.wyreAppId = wyreAppId;
         this.randomKey = randomKey;
+        this.signingKey = signingKey;
     }
     configAsync(container) {
         return __awaiter(this, void 0, void 0, function* () {
-            container.register(unifyre_extension_sdk_1.UnifyreExtensionKitClient, c => new unifyre_extension_sdk_1.UnifyreExtensionKitClient(c.get(unifyre_extension_sdk_1.ServerApi), c.get(WalletJsonRpcClient_1.WalletJsonRpcClient), this.wyreAppId));
+            container.registerSingleton(unifyre_extension_sdk_1.RequestSigner, c => new unifyre_extension_sdk_1.RequestSigner(this.signingKey));
+            container.register(unifyre_extension_sdk_1.UnifyreExtensionKitClient, c => new unifyre_extension_sdk_1.UnifyreExtensionKitClient(c.get(unifyre_extension_sdk_1.ServerApi), c.get(WalletJsonRpcClient_1.WalletJsonRpcClient), this.wyreAppId, c.get(unifyre_extension_sdk_1.RequestSigner)));
             container.registerSingleton(UnifyreBackendProxyService_1.UnifyreBackendProxyService, c => new UnifyreBackendProxyService_1.UnifyreBackendProxyService(() => c.get(unifyre_extension_sdk_1.UnifyreExtensionKitClient), this.randomKey));
         });
     }
