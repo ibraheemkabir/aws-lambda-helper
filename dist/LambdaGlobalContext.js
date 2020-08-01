@@ -25,7 +25,7 @@ class LambdaGlobalContext {
     }
     handleAsync(req, context) {
         return __awaiter(this, void 0, void 0, function* () {
-            const reqType = req.httpMethod ? 'http' :
+            const reqType = !!(req.requestContext || {}).http ? 'http' :
                 'sqs';
             return this.factory.get(reqType).handle(req, context);
         });
