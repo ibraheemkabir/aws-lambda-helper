@@ -17,7 +17,7 @@ export class LambdaGlobalContext implements Injectable {
   }
 
   async handleAsync(req: any, context: any): Promise<any> {
-    const reqType = !!(req.requestContext || {}).http ? 'http' :
+    const reqType = (!!req.httpMethod || !!(req.requestContext || {}).http) ? 'http' :
              'sqs';
     return this.factory.get(reqType).handle(req as any, context as any);
   }
