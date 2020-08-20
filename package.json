@@ -14,6 +14,7 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-typescript": "^7.3.3",
+    "@types/big.js": "^4.0.5",
     "@types/jest": "^24.0.13",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/mongodb": "^3.3.6",
@@ -29,10 +30,12 @@
   },
   "dependencies": {
     "aws-sdk": "^2.572.0",
+    "big.js": "^5.2.2",
     "ferrum-crypto": "git+https://github.com/ferrumnet/ferrum-crypto.git",
     "ferrum-plumbing": "git+https://github.com/ferrumnet/ferrum-plumbing.git",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.7",
-    "unifyre-extension-sdk": "git+https://github.com/ferrumnet/unifyre-extension-sdk.git"
+    "unifyre-extension-sdk": "git+https://github.com/ferrumnet/unifyre-extension-sdk.git",
+    "web3": "^1.2.11"
   }
 }
