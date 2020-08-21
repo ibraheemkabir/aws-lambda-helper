@@ -18,13 +18,17 @@ export declare class EthereumSmartContractHelper implements Injectable {
     getTransactionStatus(network: string, tid: string, submissionTime: number): Promise<'timedout' | 'failed' | 'pending' | 'successful'>;
     approveRequests(currency: string, approver: string, value: string, approvee: string, approveeName: string, nonce?: number): Promise<[number, CustomTransactionCallRequest[]]>;
     private addApprovesToRequests;
-    approveToZero(network: string, token: string, from: string, approvee: string): Promise<[HexString, number]>;
-    approve(network: string, token: string, from: string, rawAmount: Big, approvee: string, useThisGas: number): Promise<[HexString, number]>;
-    currentAllowance(network: string, token: string, from: string, approvee: string): Promise<Big>;
-    symbol(network: string, token: string): Promise<string>;
-    decimals(network: string, token: string): Promise<number>;
+    approveToZero(currency: string, from: string, approvee: string): Promise<[HexString, number]>;
+    approve(currency: string, from: string, rawAmount: Big, approvee: string, useThisGas: number): Promise<[HexString, number]>;
+    currentAllowance(currency: string, from: string, approvee: string): Promise<Big>;
+    amountToMachine(currency: string, amount: string): Promise<string>;
+    amountToHuman(currency: string, amount: string): Promise<string>;
+    symbol(currency: string): Promise<string>;
+    decimals(currency: string): Promise<number>;
     erc20(network: string, token: string): any;
     web3(network: string): any;
     static callRequest(contract: string, currency: string, from: string, data: string, gasLimit: string, nonce: number, description: string): CustomTransactionCallRequest;
+    static parseCurrency(currency: string): [string, string];
+    static toCurrency(network: string, token: string): string;
 }
 //# sourceMappingURL=EthereumSmartContractHelper.d.ts.map

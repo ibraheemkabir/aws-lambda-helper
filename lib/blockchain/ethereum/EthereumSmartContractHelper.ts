@@ -60,13 +60,12 @@ export class EthereumSmartContractHelper implements Injectable {
         ValidationUtils.isTrue(!!approveeName, "'approveeName' must be provided");
         ValidationUtils.isTrue(!!currency, "'currency' must be provided");
         ValidationUtils.isTrue(!!value, "'value' must be provided");
-        const network = currency.split(':')[0];
-        const token = currency.split(':')[1];
-        const tokDecimalFactor = 10 ** await this.decimals(network, token);
+        const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+        const tokDecimalFactor = 10 ** await this.decimals(currency);
         const amount = new Big(value).times(new Big(tokDecimalFactor));
         nonce = nonce || await this.web3(network).getTransactionCount(approver, 'pending');
         const amountHuman = amount.div(tokDecimalFactor).toString();
-        const symbol = await this.symbol(network, token);
+        const symbol = await this.symbol(currency);
         let requests: CustomTransactionCallRequest[] = [];
         return await this.addApprovesToRequests(requests, nonce!,
             network, amount, amountHuman, token, symbol, currency, approver, approvee, approveeName);
@@ -84,11 +83,11 @@ export class EthereumSmartContractHelper implements Injectable {
             approvee: string,
             approveeName: string,
             ): Promise<[number, CustomTransactionCallRequest[]]> {
-        const currentAllowance = await this.currentAllowance(network, token, address, approvee);
+        const currentAllowance = await this.currentAllowance(currency, address, approvee);
         if (currentAllowance.lt(amount)) {
             let approveGasOverwite: number = 0;
             if (currentAllowance.gt(new Big(0))) {
-                const [approveToZero, approveToZeroGas] = await this.approveToZero(network, token, address,
+                const [approveToZero, approveToZeroGas] = await this.approveToZero(currency, address,
                     approvee);
                 requests.push(
                     EthereumSmartContractHelper.callRequest(token, currency, address, approveToZero,
@@ -98,8 +97,7 @@ export class EthereumSmartContractHelper implements Injectable {
                 nonce++;
                 approveGasOverwite = approveToZeroGas;
             }
-            const [approve, approveGas] = await this.approve(network,
-                token, address, amount, approvee, approveGasOverwite);
+            const [approve, approveGas] = await this.approve(currency, address, amount, approvee, approveGasOverwite);
             requests.push(
                 EthereumSmartContractHelper.callRequest(token, currency, address, approve, approveGas.toString(), nonce,
                     `Approve ${amountHuman} ${symbol} to be spent by ${approveeName}`,)
@@ -109,36 +107,53 @@ export class EthereumSmartContractHelper implements Injectable {
         return [nonce, requests];
     }
 
-    public async approveToZero(network: string, token: string, from: string, approvee: string): Promise<[HexString, number]> {
+    public async approveToZero(currency: string, from: string, approvee: string): Promise<[HexString, number]> {
+        const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
         const m = this.erc20(network, token).methods.approve(approvee, '0');
         const gas = await m.estimateGas({from});
         return [m.encodeABI(), gas];
     }
 
-    public async approve(network: string, token: string, from: string,
+    public async approve(currency: string, from: string,
             rawAmount: Big, approvee: string, useThisGas: number): Promise<[HexString, number]> {
-        console.log('about to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), })
+        const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+        console.log('aboutnetwork: string, token to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), })
         const m = this.erc20(network, token).methods.approve(approvee, rawAmount.toFixed());
         const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : await m.estimateGas({from});
         return [m.encodeABI(), gas];
     }
 
-    public async currentAllowance(network: string, token: string, from: string, approvee: string) {
+    public async currentAllowance(currency: string, from: string, approvee: string) {
+        const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
         const allowance = await this.erc20(network, token).methods.allowance(from, approvee).call();
         const bAllownace = new Big(allowance.toString());
         console.log('current allowance is ', bAllownace.toString(), ' for ', approvee, 'from', from);
         return bAllownace;
     }
 
-    public async symbol(network: string, token: string): Promise<string> {
-        return this.cache.getAsync('SYMBOLS_' + token, async () => {
+    public async amountToMachine(currency: string, amount: string): Promise<string> {
+        const decimal = await this.decimals(currency);
+        const decimalFactor = 10 ** decimal;
+        return new Big(amount).times(decimalFactor).toFixed(0);
+    }
+
+    public async amountToHuman(currency: string, amount: string): Promise<string> {
+        const decimal = await this.decimals(currency);
+        const decimalFactor = 10 ** decimal;
+        return new Big(amount).div(decimalFactor).toFixed();
+    }
+
+    public async symbol(currency: string): Promise<string> {
+        const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+        return this.cache.getAsync('SYMBOLS_' + currency, async () => {
             const tokenCon = this.erc20(network, token);
             return await tokenCon.methods.symbol().call();
         });
     }
 
-    public async decimals(network: string, token: string): Promise<number> {
-        return this.cache.getAsync('DECIMALS_' + token, async () => {
+    public async decimals(currency: string): Promise<number> {
+        const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+        return this.cache.getAsync('DECIMALS_' + currency, async () => {
             const tokenCon = this.erc20(network, token);
             return await tokenCon.methods.decimals().call();
         });
@@ -172,5 +187,15 @@ export class EthereumSmartContractHelper implements Injectable {
             nonce,
             description,
         };
+    }
+
+    public static parseCurrency(currency: string): [string, string] {
+        const ret = currency.split(':');
+        ValidationUtils.isTrue(ret.length === 2, 'Invalid currency ' + currency);
+        return [ret[0], ret[1]];
+    }
+
+    public static toCurrency(network: string, token: string): string {
+        return `${network}:${token}`;
     }
 }

@@ -65,69 +65,87 @@ class EthereumSmartContractHelper {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!approveeName, "'approveeName' must be provided");
             ferrum_plumbing_1.ValidationUtils.isTrue(!!currency, "'currency' must be provided");
             ferrum_plumbing_1.ValidationUtils.isTrue(!!value, "'value' must be provided");
-            const network = currency.split(':')[0];
-            const token = currency.split(':')[1];
-            const tokDecimalFactor = Math.pow(10, yield this.decimals(network, token));
+            const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+            const tokDecimalFactor = Math.pow(10, yield this.decimals(currency));
             const amount = new big_js_1.default(value).times(new big_js_1.default(tokDecimalFactor));
             nonce = nonce || (yield this.web3(network).getTransactionCount(approver, 'pending'));
             const amountHuman = amount.div(tokDecimalFactor).toString();
-            const symbol = yield this.symbol(network, token);
+            const symbol = yield this.symbol(currency);
             let requests = [];
             return yield this.addApprovesToRequests(requests, nonce, network, amount, amountHuman, token, symbol, currency, approver, approvee, approveeName);
         });
     }
     addApprovesToRequests(requests, nonce, network, amount, amountHuman, token, symbol, currency, address, approvee, approveeName) {
         return __awaiter(this, void 0, void 0, function* () {
-            const currentAllowance = yield this.currentAllowance(network, token, address, approvee);
+            const currentAllowance = yield this.currentAllowance(currency, address, approvee);
             if (currentAllowance.lt(amount)) {
                 let approveGasOverwite = 0;
                 if (currentAllowance.gt(new big_js_1.default(0))) {
-                    const [approveToZero, approveToZeroGas] = yield this.approveToZero(network, token, address, approvee);
+                    const [approveToZero, approveToZeroGas] = yield this.approveToZero(currency, address, approvee);
                     requests.push(EthereumSmartContractHelper.callRequest(token, currency, address, approveToZero, approveToZeroGas.toString(), nonce, `Zero out the approval for ${symbol} by ${approveeName}`));
                     nonce++;
                     approveGasOverwite = approveToZeroGas;
                 }
-                const [approve, approveGas] = yield this.approve(network, token, address, amount, approvee, approveGasOverwite);
+                const [approve, approveGas] = yield this.approve(currency, address, amount, approvee, approveGasOverwite);
                 requests.push(EthereumSmartContractHelper.callRequest(token, currency, address, approve, approveGas.toString(), nonce, `Approve ${amountHuman} ${symbol} to be spent by ${approveeName}`));
                 nonce++;
             }
             return [nonce, requests];
         });
     }
-    approveToZero(network, token, from, approvee) {
+    approveToZero(currency, from, approvee) {
         return __awaiter(this, void 0, void 0, function* () {
+            const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
             const m = this.erc20(network, token).methods.approve(approvee, '0');
             const gas = yield m.estimateGas({ from });
             return [m.encodeABI(), gas];
         });
     }
-    approve(network, token, from, rawAmount, approvee, useThisGas) {
+    approve(currency, from, rawAmount, approvee, useThisGas) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('about to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), });
+            const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+            console.log('aboutnetwork: string, token to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), });
             const m = this.erc20(network, token).methods.approve(approvee, rawAmount.toFixed());
             const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : yield m.estimateGas({ from });
             return [m.encodeABI(), gas];
         });
     }
-    currentAllowance(network, token, from, approvee) {
+    currentAllowance(currency, from, approvee) {
         return __awaiter(this, void 0, void 0, function* () {
+            const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
             const allowance = yield this.erc20(network, token).methods.allowance(from, approvee).call();
             const bAllownace = new big_js_1.default(allowance.toString());
             console.log('current allowance is ', bAllownace.toString(), ' for ', approvee, 'from', from);
             return bAllownace;
         });
     }
-    symbol(network, token) {
+    amountToMachine(currency, amount) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.cache.getAsync('SYMBOLS_' + token, () => __awaiter(this, void 0, void 0, function* () {
+            const decimal = yield this.decimals(currency);
+            const decimalFactor = Math.pow(10, decimal);
+            return new big_js_1.default(amount).times(decimalFactor).toFixed(0);
+        });
+    }
+    amountToHuman(currency, amount) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const decimal = yield this.decimals(currency);
+            const decimalFactor = Math.pow(10, decimal);
+            return new big_js_1.default(amount).div(decimalFactor).toFixed();
+        });
+    }
+    symbol(currency) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+            return this.cache.getAsync('SYMBOLS_' + currency, () => __awaiter(this, void 0, void 0, function* () {
                 const tokenCon = this.erc20(network, token);
                 return yield tokenCon.methods.symbol().call();
             }));
         });
     }
-    decimals(network, token) {
+    decimals(currency) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.cache.getAsync('DECIMALS_' + token, () => __awaiter(this, void 0, void 0, function* () {
+            const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+            return this.cache.getAsync('DECIMALS_' + currency, () => __awaiter(this, void 0, void 0, function* () {
                 const tokenCon = this.erc20(network, token);
                 return yield tokenCon.methods.decimals().call();
             }));
@@ -158,6 +176,14 @@ class EthereumSmartContractHelper {
             nonce,
             description,
         };
+    }
+    static parseCurrency(currency) {
+        const ret = currency.split(':');
+        ferrum_plumbing_1.ValidationUtils.isTrue(ret.length === 2, 'Invalid currency ' + currency);
+        return [ret[0], ret[1]];
+    }
+    static toCurrency(network, token) {
+        return `${network}:${token}`;
     }
 }
 exports.EthereumSmartContractHelper = EthereumSmartContractHelper;
