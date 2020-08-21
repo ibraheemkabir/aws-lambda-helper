@@ -73,8 +73,7 @@ class EthereumSmartContractHelper {
             const amountHuman = amount.div(tokDecimalFactor).toString();
             const symbol = yield this.symbol(network, token);
             let requests = [];
-            [nonce, requests] = yield this.addApprovesToRequests(requests, nonce, network, amount, amountHuman, token, symbol, currency, approver, approvee, approveeName);
-            return requests;
+            return yield this.addApprovesToRequests(requests, nonce, network, amount, amountHuman, token, symbol, currency, approver, approvee, approveeName);
         });
     }
     addApprovesToRequests(requests, nonce, network, amount, amountHuman, token, symbol, currency, address, approvee, approveeName) {
@@ -83,7 +82,7 @@ class EthereumSmartContractHelper {
             if (currentAllowance.lt(amount)) {
                 let approveGasOverwite = 0;
                 if (currentAllowance.gt(new big_js_1.default(0))) {
-                    const [approveToZero, approveToZeroGas] = yield this.approveToZero(network, token, address, amount, approvee);
+                    const [approveToZero, approveToZeroGas] = yield this.approveToZero(network, token, address, approvee);
                     requests.push(EthereumSmartContractHelper.callRequest(token, currency, address, approveToZero, approveToZeroGas.toString(), nonce, `Zero out the approval for ${symbol} by ${approveeName}`));
                     nonce++;
                     approveGasOverwite = approveToZeroGas;
@@ -95,18 +94,17 @@ class EthereumSmartContractHelper {
             return [nonce, requests];
         });
     }
-    approveToZero(network, token, from, amount, approvee) {
+    approveToZero(network, token, from, approvee) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('about to approve: ', { token, to: approvee, amount: amount.toFixed(), });
             const m = this.erc20(network, token).methods.approve(approvee, '0');
             const gas = yield m.estimateGas({ from });
             return [m.encodeABI(), gas];
         });
     }
-    approve(network, token, from, amount, approvee, useThisGas) {
+    approve(network, token, from, rawAmount, approvee, useThisGas) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('about to approve: ', { token, to: approvee, amount: amount.toFixed(), });
-            const m = this.erc20(network, token).methods.approve(approvee, amount.toFixed());
+            console.log('about to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), });
+            const m = this.erc20(network, token).methods.approve(approvee, rawAmount.toFixed());
             const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : yield m.estimateGas({ from });
             return [m.encodeABI(), gas];
         });

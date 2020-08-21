@@ -54,7 +54,7 @@ export class EthereumSmartContractHelper implements Injectable {
         approvee: string,
         approveeName: string,
         nonce?: number,
-        ): Promise<CustomTransactionCallRequest[]> {
+        ): Promise<[number, CustomTransactionCallRequest[]]> {
         ValidationUtils.isTrue(!!approver, "'approver' must be provided");
         ValidationUtils.isTrue(!!approvee, "'approvee' must be provided");
         ValidationUtils.isTrue(!!approveeName, "'approveeName' must be provided");
@@ -68,9 +68,8 @@ export class EthereumSmartContractHelper implements Injectable {
         const amountHuman = amount.div(tokDecimalFactor).toString();
         const symbol = await this.symbol(network, token);
         let requests: CustomTransactionCallRequest[] = [];
-        [nonce, requests] = await this.addApprovesToRequests(requests, nonce!,
+        return await this.addApprovesToRequests(requests, nonce!,
             network, amount, amountHuman, token, symbol, currency, approver, approvee, approveeName);
-        return requests;
     }
 
     private async addApprovesToRequests(requests: CustomTransactionCallRequest[],
@@ -90,7 +89,7 @@ export class EthereumSmartContractHelper implements Injectable {
             let approveGasOverwite: number = 0;
             if (currentAllowance.gt(new Big(0))) {
                 const [approveToZero, approveToZeroGas] = await this.approveToZero(network, token, address,
-                    amount, approvee);
+                    approvee);
                 requests.push(
                     EthereumSmartContractHelper.callRequest(token, currency, address, approveToZero,
                         approveToZeroGas.toString(), nonce,
@@ -110,17 +109,16 @@ export class EthereumSmartContractHelper implements Injectable {
         return [nonce, requests];
     }
 
-    private async approveToZero(network: string, token: string, from: string, amount: Big, approvee: string): Promise<[HexString, number]> {
-        console.log('about to approve: ', { token, to: approvee, amount: amount.toFixed(), })
+    public async approveToZero(network: string, token: string, from: string, approvee: string): Promise<[HexString, number]> {
         const m = this.erc20(network, token).methods.approve(approvee, '0');
         const gas = await m.estimateGas({from});
         return [m.encodeABI(), gas];
     }
 
-    private async approve(network: string, token: string, from: string,
-            amount: Big, approvee: string, useThisGas: number): Promise<[HexString, number]> {
-        console.log('about to approve: ', { token, to: approvee, amount: amount.toFixed(), })
-        const m = this.erc20(network, token).methods.approve(approvee, amount.toFixed());
+    public async approve(network: string, token: string, from: string,
+            rawAmount: Big, approvee: string, useThisGas: number): Promise<[HexString, number]> {
+        console.log('about to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), })
+        const m = this.erc20(network, token).methods.approve(approvee, rawAmount.toFixed());
         const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : await m.estimateGas({from});
         return [m.encodeABI(), gas];
     }

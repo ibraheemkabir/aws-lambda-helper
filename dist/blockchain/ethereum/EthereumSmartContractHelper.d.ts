@@ -1,4 +1,4 @@
-import { Injectable } from "ferrum-plumbing";
+import { HexString, Injectable } from "ferrum-plumbing";
 import Big from 'big.js';
 import { CustomTransactionCallRequest } from "unifyre-extension-sdk";
 export declare type Web3ProviderConfig = {
@@ -16,10 +16,10 @@ export declare class EthereumSmartContractHelper implements Injectable {
     constructor(provider: Web3ProviderConfig);
     __name__(): string;
     getTransactionStatus(network: string, tid: string, submissionTime: number): Promise<'timedout' | 'failed' | 'pending' | 'successful'>;
-    approveRequests(currency: string, approver: string, value: string, approvee: string, approveeName: string, nonce?: number): Promise<CustomTransactionCallRequest[]>;
+    approveRequests(currency: string, approver: string, value: string, approvee: string, approveeName: string, nonce?: number): Promise<[number, CustomTransactionCallRequest[]]>;
     private addApprovesToRequests;
-    private approveToZero;
-    private approve;
+    approveToZero(network: string, token: string, from: string, approvee: string): Promise<[HexString, number]>;
+    approve(network: string, token: string, from: string, rawAmount: Big, approvee: string, useThisGas: number): Promise<[HexString, number]>;
     currentAllowance(network: string, token: string, from: string, approvee: string): Promise<Big>;
     symbol(network: string, token: string): Promise<string>;
     decimals(network: string, token: string): Promise<number>;
