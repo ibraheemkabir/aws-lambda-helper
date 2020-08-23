@@ -19,7 +19,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ferrum_plumbing_1 = require("ferrum-plumbing");
-// @ts-ignore
 const erc20Abi = __importStar(require("./resources/IERC20.json"));
 const web3_1 = __importDefault(require("web3"));
 const big_js_1 = __importDefault(require("big.js"));
@@ -153,7 +152,7 @@ class EthereumSmartContractHelper {
     }
     erc20(network, token) {
         const web3 = this.web3(network);
-        return new web3.Contract(erc20Abi.default, token);
+        return new web3.Contract(erc20Abi, token);
     }
     web3(network) {
         ferrum_plumbing_1.ValidationUtils.isTrue(!!this.provider[network], 'No provider is configured for ' + network);

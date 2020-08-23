@@ -1,6 +1,5 @@
 import { HexString, Injectable, LocalCache, ValidationUtils } from "ferrum-plumbing";
-// @ts-ignore
-import * as erc20Abi from './resources/IERC20.json'
+import * as erc20Abi from './resources/IERC20.json';
 import Web3 from 'web3';
 import Big from 'big.js';
 import { CustomTransactionCallRequest } from "unifyre-extension-sdk";
@@ -161,7 +160,7 @@ export class EthereumSmartContractHelper implements Injectable {
 
     public erc20(network: string, token: string) {
         const web3 = this.web3(network);
-        return new web3.Contract(erc20Abi.default, token);
+        return new web3.Contract(erc20Abi, token);
     }
 
     public web3(network: string) {
