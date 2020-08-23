@@ -7,19 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ferrum_plumbing_1 = require("ferrum-plumbing");
-const erc20Abi = __importStar(require("./resources/IERC20.json"));
+const IERC20_json_1 = __importDefault(require("./resources/IERC20.json"));
 const web3_1 = __importDefault(require("web3"));
 const big_js_1 = __importDefault(require("big.js"));
 const PROVIDER_TIMEOUT = 1000 * 3600;
@@ -152,7 +145,7 @@ class EthereumSmartContractHelper {
     }
     erc20(network, token) {
         const web3 = this.web3(network);
-        return new web3.Contract(erc20Abi, token);
+        return new web3.Contract(IERC20_json_1.default, token);
     }
     web3(network) {
         ferrum_plumbing_1.ValidationUtils.isTrue(!!this.provider[network], 'No provider is configured for ' + network);

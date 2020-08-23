@@ -1,5 +1,5 @@
 import { HexString, Injectable, LocalCache, ValidationUtils } from "ferrum-plumbing";
-import * as erc20Abi from './resources/IERC20.json';
+import erc20Abi from './resources/IERC20.json';
 import Web3 from 'web3';
 import Big from 'big.js';
 import { CustomTransactionCallRequest } from "unifyre-extension-sdk";
