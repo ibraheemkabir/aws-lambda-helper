@@ -8,6 +8,6 @@ export declare class UnifyreBackendProxyService implements Injectable {
     __name__(): string;
     signInToServer(token: string, expiresIn?: string): Promise<[AppUserProfile, string]>;
     signInUsingToken(jsonToken: string): string;
-    private newSession;
+    newSession(userId: string, expiresIn?: string): string;
 }
 //# sourceMappingURL=UnifyreBackendProxyService.d.ts.map

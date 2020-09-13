@@ -23,7 +23,7 @@ class UnifyreBackendProxyService {
         return __awaiter(this, void 0, void 0, function* () {
             const uniKit = this.unifyreKitFactory();
             yield uniKit.signInWithToken(token);
-            const userProfile = uniKit.getUserProfile();
+            const userProfile = yield uniKit.getUserProfile();
             ferrum_plumbing_1.ValidationUtils.isTrue(!!userProfile, 'Error signing in to unifyre');
             const session = this.newSession(userProfile.userId, expiresIn);
             return [userProfile, session];

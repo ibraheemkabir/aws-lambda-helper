@@ -20,7 +20,7 @@ class UnifyreBackendProxyModule {
     configAsync(container) {
         return __awaiter(this, void 0, void 0, function* () {
             container.registerSingleton(unifyre_extension_sdk_1.RequestSigner, c => new unifyre_extension_sdk_1.RequestSigner(this.signingKey));
-            container.register(unifyre_extension_sdk_1.UnifyreExtensionKitClient, c => new unifyre_extension_sdk_1.UnifyreExtensionKitClient(c.get(unifyre_extension_sdk_1.ServerApi), c.get(WalletJsonRpcClient_1.WalletJsonRpcClient), this.wyreAppId, c.get(unifyre_extension_sdk_1.RequestSigner)));
+            container.register(unifyre_extension_sdk_1.UnifyreExtensionKitClient, c => new unifyre_extension_sdk_1.UnifyreExtensionKitClientImpl(c.get(unifyre_extension_sdk_1.ServerApi), c.get(WalletJsonRpcClient_1.WalletJsonRpcClient), this.wyreAppId, c.get(unifyre_extension_sdk_1.RequestSigner)));
             container.registerSingleton(UnifyreBackendProxyService_1.UnifyreBackendProxyService, c => new UnifyreBackendProxyService_1.UnifyreBackendProxyService(() => c.get(unifyre_extension_sdk_1.UnifyreExtensionKitClient), this.randomKey));
         });
     }
