@@ -43,7 +43,7 @@ class EthereumSmartContractHelper {
             if (!t && (submissionTime + Web3Utils.TRANSACTION_TIMEOUT > Date.now())) {
                 return 'timedout';
             }
-            if (!t.blockNumber) {
+            if (!t || !t.blockNumber) {
                 return 'pending';
             }
             const receipt = yield web3.getTransactionReceipt(tid);

@@ -39,7 +39,7 @@ export class EthereumSmartContractHelper implements Injectable {
         if (!t && (submissionTime + Web3Utils.TRANSACTION_TIMEOUT > Date.now()) ) {
             return 'timedout';
         }
-        if (!t.blockNumber) {
+        if (!t || !t.blockNumber) {
             return 'pending';
         }
         const receipt = await web3.getTransactionReceipt(tid);
