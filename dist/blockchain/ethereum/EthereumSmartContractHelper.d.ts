@@ -10,6 +10,7 @@ export declare class Web3Utils {
     static isZeroAddress(val: string): boolean;
     static zX(str: string): string;
 }
+export declare function tryWithBytes32(web3: any, name: string, address: string, fun: () => Promise<any>): Promise<any>;
 export declare class EthereumSmartContractHelper implements Injectable {
     private provider;
     private cache;

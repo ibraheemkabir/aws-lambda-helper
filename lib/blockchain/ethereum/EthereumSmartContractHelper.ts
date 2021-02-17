@@ -22,6 +22,28 @@ export class Web3Utils {
     }
 }
 
+export async function tryWithBytes32(web3: any, name: string, address: string, fun: () => Promise<any>) {
+    try {
+        return await fun();
+    } catch(e) {
+        const cont = web3.Contract([{
+            "constant": true,
+            "inputs": [],
+            "name": name,
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bytes32"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }], address);
+        const val = await cont.methods[name]().call();
+        return Web3.utils.hexToAscii(val);
+    }
+}
+
 export class EthereumSmartContractHelper implements Injectable {
     private cache: LocalCache;
     constructor(
@@ -146,15 +168,16 @@ export class EthereumSmartContractHelper implements Injectable {
         const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
         return this.cache.getAsync('SYMBOLS_' + currency, async () => {
             const tokenCon = this.erc20(network, token);
-            return await tokenCon.methods.symbol().call();
+            return tryWithBytes32(this.web3(network), 'symbol', token, async () => 
+                await tokenCon.methods.symbol().call());
         });
     }
 
     public async decimals(currency: string): Promise<number> {
         const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
-        return this.cache.getAsync('DECIMALS_' + currency, async () => {
+        return this.cache.getAsync('DECIMALS_' + currency, () => {
             const tokenCon = this.erc20(network, token);
-            return await tokenCon.methods.decimals().call();
+            return tokenCon.methods.decimals().call();
         });
     }
 

@@ -30,6 +30,31 @@ class Web3Utils {
 Web3Utils.TRANSACTION_TIMEOUT = 36 * 1000;
 Web3Utils.DEFAULT_APPROVE_GAS = 60000;
 exports.Web3Utils = Web3Utils;
+function tryWithBytes32(web3, name, address, fun) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            return yield fun();
+        }
+        catch (e) {
+            const cont = web3.Contract([{
+                    "constant": true,
+                    "inputs": [],
+                    "name": name,
+                    "outputs": [
+                        {
+                            "name": "",
+                            "type": "bytes32"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }], address);
+            const val = yield cont.methods[name]().call();
+            return web3_1.default.utils.hexToAscii(val);
+        }
+    });
+}
+exports.tryWithBytes32 = tryWithBytes32;
 class EthereumSmartContractHelper {
     constructor(provider) {
         this.provider = provider;
@@ -130,17 +155,17 @@ class EthereumSmartContractHelper {
             const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
             return this.cache.getAsync('SYMBOLS_' + currency, () => __awaiter(this, void 0, void 0, function* () {
                 const tokenCon = this.erc20(network, token);
-                return yield tokenCon.methods.symbol().call();
+                return tryWithBytes32(this.web3(network), 'symbol', token, () => __awaiter(this, void 0, void 0, function* () { return yield tokenCon.methods.symbol().call(); }));
             }));
         });
     }
     decimals(currency) {
         return __awaiter(this, void 0, void 0, function* () {
             const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
-            return this.cache.getAsync('DECIMALS_' + currency, () => __awaiter(this, void 0, void 0, function* () {
+            return this.cache.getAsync('DECIMALS_' + currency, () => {
                 const tokenCon = this.erc20(network, token);
-                return yield tokenCon.methods.decimals().call();
-            }));
+                return tokenCon.methods.decimals().call();
+            });
         });
     }
     erc20(network, token) {
