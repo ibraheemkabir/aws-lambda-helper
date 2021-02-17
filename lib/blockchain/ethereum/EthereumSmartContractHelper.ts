@@ -26,7 +26,7 @@ export async function tryWithBytes32(web3: any, name: string, address: string, f
     try {
         return await fun();
     } catch(e) {
-        const cont = web3.Contract([{
+        const cont = new web3.Contract([{
             "constant": true,
             "inputs": [],
             "name": name,

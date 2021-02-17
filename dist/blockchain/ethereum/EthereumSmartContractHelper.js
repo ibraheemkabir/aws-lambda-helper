@@ -36,7 +36,7 @@ function tryWithBytes32(web3, name, address, fun) {
             return yield fun();
         }
         catch (e) {
-            const cont = web3.Contract([{
+            const cont = new web3.Contract([{
                     "constant": true,
                     "inputs": [],
                     "name": name,
