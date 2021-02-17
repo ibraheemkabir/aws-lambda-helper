@@ -50,7 +50,7 @@ function tryWithBytes32(web3, name, address, fun) {
                     "type": "function"
                 }], address);
             const val = yield cont.methods[name]().call();
-            return web3_1.default.utils.hexToAscii(val);
+            return web3_1.default.utils.hexToUtf8(val);
         }
     });
 }

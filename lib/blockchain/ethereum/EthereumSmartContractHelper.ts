@@ -40,7 +40,7 @@ export async function tryWithBytes32(web3: any, name: string, address: string, f
             "type": "function"
         }], address);
         const val = await cont.methods[name]().call();
-        return Web3.utils.hexToAscii(val);
+        return Web3.utils.hexToUtf8(val);
     }
 }
 
