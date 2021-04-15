@@ -114,7 +114,8 @@ class EthereumSmartContractHelper {
                     nonce++;
                     approveGasOverwite = approveToZeroGas;
                 }
-                const [approve, approveGas] = yield this.approve(currency, address, useMax ? MAX_AMOUNT : amount, approvee, approveGasOverwite);
+                const [approve, approveGas] = useMax ? yield this.approveMax(currency, address, approvee, approveGasOverwite) :
+                    yield this.approve(currency, address, amount, approvee, approveGasOverwite);
                 requests.push(EthereumSmartContractHelper.callRequest(token, currency, address, approve, approveGas.toString(), nonce, `Approve ${useMax ? 'max' : amountHuman} ${symbol} to be spent by ${approveeName}`));
                 nonce++;
             }
@@ -132,8 +133,17 @@ class EthereumSmartContractHelper {
     approve(currency, from, rawAmount, approvee, useThisGas) {
         return __awaiter(this, void 0, void 0, function* () {
             const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
-            console.log('aboutnetwork: string, token to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), });
+            console.log('about to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), });
             const m = this.erc20(network, token).methods.approve(approvee, rawAmount.toFixed());
+            const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : yield m.estimateGas({ from });
+            return [m.encodeABI(), gas];
+        });
+    }
+    approveMax(currency, from, approvee, useThisGas) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+            console.log('about to approve max: ', { from, token, approvee });
+            const m = this.erc20(network, token).methods.approve(approvee, MAX_AMOUNT.toFixed());
             const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : yield m.estimateGas({ from });
             return [m.encodeABI(), gas];
         });

@@ -23,6 +23,7 @@ export declare class EthereumSmartContractHelper implements Injectable {
     private addApprovesToRequests;
     approveToZero(currency: string, from: string, approvee: string): Promise<[HexString, number]>;
     approve(currency: string, from: string, rawAmount: Big, approvee: string, useThisGas: number): Promise<[HexString, number]>;
+    approveMax(currency: string, from: string, approvee: string, useThisGas: number): Promise<[HexString, number]>;
     currentAllowance(currency: string, from: string, approvee: string): Promise<Big>;
     amountToMachine(currency: string, amount: string): Promise<string>;
     amountToHuman(currency: string, amount: string): Promise<string>;

@@ -144,8 +144,10 @@ export class EthereumSmartContractHelper implements Injectable {
                 nonce++;
                 approveGasOverwite = approveToZeroGas;
             }
-            const [approve, approveGas] = await this.approve(currency, address,
-                useMax ? MAX_AMOUNT : amount, approvee, approveGasOverwite);
+            const [approve, approveGas] = useMax ? await this.approveMax(currency, address,
+                    approvee, approveGasOverwite) :
+                await this.approve(currency, address,
+                    amount, approvee, approveGasOverwite);
             requests.push(
                 EthereumSmartContractHelper.callRequest(token, currency, address, approve, approveGas.toString(), nonce,
                     `Approve ${useMax ? 'max' : amountHuman} ${symbol} to be spent by ${approveeName}`,)
@@ -162,11 +164,25 @@ export class EthereumSmartContractHelper implements Injectable {
         return [m.encodeABI(), gas];
     }
 
-    public async approve(currency: string, from: string,
-            rawAmount: Big, approvee: string, useThisGas: number): Promise<[HexString, number]> {
+    public async approve(currency: string,
+            from: string,
+            rawAmount: Big,
+            approvee: string,
+            useThisGas: number): Promise<[HexString, number]> {
         const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
-        console.log('aboutnetwork: string, token to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), })
+        console.log('about to approve: ', { from, token, approvee, amount: rawAmount.toFixed(), })
         const m = this.erc20(network, token).methods.approve(approvee, rawAmount.toFixed());
+        const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : await m.estimateGas({from});
+        return [m.encodeABI(), gas];
+    }
+
+    public async approveMax(currency: string,
+            from: string,
+            approvee: string,
+            useThisGas: number): Promise<[HexString, number]> {
+        const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+        console.log('about to approve max: ', { from, token, approvee})
+        const m = this.erc20(network, token).methods.approve(approvee, MAX_AMOUNT.toFixed());
         const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : await m.estimateGas({from});
         return [m.encodeABI(), gas];
     }
