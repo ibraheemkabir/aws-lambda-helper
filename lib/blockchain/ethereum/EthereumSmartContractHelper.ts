@@ -8,6 +8,8 @@ export type Web3ProviderConfig = { [network: string]: string };
 
 const PROVIDER_TIMEOUT = 1000 * 3600;
 
+const MAX_AMOUNT = new Big(115792089237316195423570985008687907853269984665640564039457584007913129639935);
+
 export class Web3Utils {
     static TRANSACTION_TIMEOUT = 36 * 1000;
     static DEFAULT_APPROVE_GAS = 60000;
@@ -68,12 +70,35 @@ export class EthereumSmartContractHelper implements Injectable {
         return !!receipt.status ? 'successful' : 'failed';
     }
 
+    public async approveMaxRequests(
+        currency: string,
+        approver: string,
+        value: string,
+        approvee: string,
+        approveeName: string,
+        nonce?: number,
+        ): Promise<[number, CustomTransactionCallRequest[]]> {
+        return this._approveRequests(currency, approver, value, approvee, approveeName, true, nonce);
+    }
+
     public async approveRequests(
         currency: string,
         approver: string,
         value: string,
         approvee: string,
         approveeName: string,
+        nonce?: number,
+        ): Promise<[number, CustomTransactionCallRequest[]]> {
+        return this._approveRequests(currency, approver, value, approvee, approveeName, false, nonce);
+    }
+
+    private async _approveRequests(
+        currency: string,
+        approver: string,
+        value: string,
+        approvee: string,
+        approveeName: string,
+        maxAmount: boolean,
         nonce?: number,
         ): Promise<[number, CustomTransactionCallRequest[]]> {
         ValidationUtils.isTrue(!!approver, "'approver' must be provided");
@@ -89,12 +114,12 @@ export class EthereumSmartContractHelper implements Injectable {
         const symbol = await this.symbol(currency);
         let requests: CustomTransactionCallRequest[] = [];
         return await this.addApprovesToRequests(requests, nonce!,
-            network, amount, amountHuman, token, symbol, currency, approver, approvee, approveeName);
+            amount, amountHuman, token, symbol, currency, approver, approvee,
+            approveeName, maxAmount);
     }
 
     private async addApprovesToRequests(requests: CustomTransactionCallRequest[],
             nonce: number,
-            network: string,
             amount: Big,
             amountHuman: string,
             token: string,
@@ -103,6 +128,7 @@ export class EthereumSmartContractHelper implements Injectable {
             address: string,
             approvee: string,
             approveeName: string,
+            useMax: boolean,
             ): Promise<[number, CustomTransactionCallRequest[]]> {
         const currentAllowance = await this.currentAllowance(currency, address, approvee);
         if (currentAllowance.lt(amount)) {
@@ -118,10 +144,11 @@ export class EthereumSmartContractHelper implements Injectable {
                 nonce++;
                 approveGasOverwite = approveToZeroGas;
             }
-            const [approve, approveGas] = await this.approve(currency, address, amount, approvee, approveGasOverwite);
+            const [approve, approveGas] = await this.approve(currency, address,
+                useMax ? MAX_AMOUNT : amount, approvee, approveGasOverwite);
             requests.push(
                 EthereumSmartContractHelper.callRequest(token, currency, address, approve, approveGas.toString(), nonce,
-                    `Approve ${amountHuman} ${symbol} to be spent by ${approveeName}`,)
+                    `Approve ${useMax ? 'max' : amountHuman} ${symbol} to be spent by ${approveeName}`,)
             );
             nonce++;
         }

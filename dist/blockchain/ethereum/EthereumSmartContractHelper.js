@@ -16,6 +16,7 @@ const IERC20_json_1 = __importDefault(require("./resources/IERC20.json"));
 const web3_1 = __importDefault(require("web3"));
 const big_js_1 = __importDefault(require("big.js"));
 const PROVIDER_TIMEOUT = 1000 * 3600;
+const MAX_AMOUNT = new big_js_1.default(115792089237316195423570985008687907853269984665640564039457584007913129639935);
 class Web3Utils {
     static isZeroAddress(val) {
         return !val || !val.replace(/[0xX]*/, '').length;
@@ -75,7 +76,17 @@ class EthereumSmartContractHelper {
             return !!receipt.status ? 'successful' : 'failed';
         });
     }
+    approveMaxRequests(currency, approver, value, approvee, approveeName, nonce) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this._approveRequests(currency, approver, value, approvee, approveeName, true, nonce);
+        });
+    }
     approveRequests(currency, approver, value, approvee, approveeName, nonce) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this._approveRequests(currency, approver, value, approvee, approveeName, false, nonce);
+        });
+    }
+    _approveRequests(currency, approver, value, approvee, approveeName, maxAmount, nonce) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!approver, "'approver' must be provided");
             ferrum_plumbing_1.ValidationUtils.isTrue(!!approvee, "'approvee' must be provided");
@@ -89,10 +100,10 @@ class EthereumSmartContractHelper {
             const amountHuman = amount.div(tokDecimalFactor).toString();
             const symbol = yield this.symbol(currency);
             let requests = [];
-            return yield this.addApprovesToRequests(requests, nonce, network, amount, amountHuman, token, symbol, currency, approver, approvee, approveeName);
+            return yield this.addApprovesToRequests(requests, nonce, amount, amountHuman, token, symbol, currency, approver, approvee, approveeName, maxAmount);
         });
     }
-    addApprovesToRequests(requests, nonce, network, amount, amountHuman, token, symbol, currency, address, approvee, approveeName) {
+    addApprovesToRequests(requests, nonce, amount, amountHuman, token, symbol, currency, address, approvee, approveeName, useMax) {
         return __awaiter(this, void 0, void 0, function* () {
             const currentAllowance = yield this.currentAllowance(currency, address, approvee);
             if (currentAllowance.lt(amount)) {
@@ -103,8 +114,8 @@ class EthereumSmartContractHelper {
                     nonce++;
                     approveGasOverwite = approveToZeroGas;
                 }
-                const [approve, approveGas] = yield this.approve(currency, address, amount, approvee, approveGasOverwite);
-                requests.push(EthereumSmartContractHelper.callRequest(token, currency, address, approve, approveGas.toString(), nonce, `Approve ${amountHuman} ${symbol} to be spent by ${approveeName}`));
+                const [approve, approveGas] = yield this.approve(currency, address, useMax ? MAX_AMOUNT : amount, approvee, approveGasOverwite);
+                requests.push(EthereumSmartContractHelper.callRequest(token, currency, address, approve, approveGas.toString(), nonce, `Approve ${useMax ? 'max' : amountHuman} ${symbol} to be spent by ${approveeName}`));
                 nonce++;
             }
             return [nonce, requests];

@@ -17,7 +17,9 @@ export declare class EthereumSmartContractHelper implements Injectable {
     constructor(provider: Web3ProviderConfig);
     __name__(): string;
     getTransactionStatus(network: string, tid: string, submissionTime: number): Promise<'timedout' | 'failed' | 'pending' | 'successful'>;
+    approveMaxRequests(currency: string, approver: string, value: string, approvee: string, approveeName: string, nonce?: number): Promise<[number, CustomTransactionCallRequest[]]>;
     approveRequests(currency: string, approver: string, value: string, approvee: string, approveeName: string, nonce?: number): Promise<[number, CustomTransactionCallRequest[]]>;
+    private _approveRequests;
     private addApprovesToRequests;
     approveToZero(currency: string, from: string, approvee: string): Promise<[HexString, number]>;
     approve(currency: string, from: string, rawAmount: Big, approvee: string, useThisGas: number): Promise<[HexString, number]>;
