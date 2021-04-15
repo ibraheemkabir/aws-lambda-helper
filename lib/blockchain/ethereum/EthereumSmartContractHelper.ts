@@ -8,7 +8,7 @@ export type Web3ProviderConfig = { [network: string]: string };
 
 const PROVIDER_TIMEOUT = 1000 * 3600;
 
-const MAX_AMOUNT = new Big(115792089237316195423570985008687907853269984665640564039457584007913129639935);
+const MAX_AMOUNT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 
 export class Web3Utils {
     static TRANSACTION_TIMEOUT = 36 * 1000;
@@ -182,8 +182,9 @@ export class EthereumSmartContractHelper implements Injectable {
             useThisGas: number): Promise<[HexString, number]> {
         const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
         console.log('about to approve max: ', { from, token, approvee})
-        const m = this.erc20(network, token).methods.approve(approvee, MAX_AMOUNT.toFixed());
-        const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : await m.estimateGas({from});
+        const m = this.erc20(network, token).methods.approve(approvee, MAX_AMOUNT);
+        const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) :
+            await m.estimateGas({from});
         return [m.encodeABI(), gas];
     }
 

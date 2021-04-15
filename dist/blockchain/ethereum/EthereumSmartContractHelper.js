@@ -16,7 +16,7 @@ const IERC20_json_1 = __importDefault(require("./resources/IERC20.json"));
 const web3_1 = __importDefault(require("web3"));
 const big_js_1 = __importDefault(require("big.js"));
 const PROVIDER_TIMEOUT = 1000 * 3600;
-const MAX_AMOUNT = new big_js_1.default(115792089237316195423570985008687907853269984665640564039457584007913129639935);
+const MAX_AMOUNT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 class Web3Utils {
     static isZeroAddress(val) {
         return !val || !val.replace(/[0xX]*/, '').length;
@@ -143,8 +143,9 @@ class EthereumSmartContractHelper {
         return __awaiter(this, void 0, void 0, function* () {
             const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
             console.log('about to approve max: ', { from, token, approvee });
-            const m = this.erc20(network, token).methods.approve(approvee, MAX_AMOUNT.toFixed());
-            const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) : yield m.estimateGas({ from });
+            const m = this.erc20(network, token).methods.approve(approvee, MAX_AMOUNT);
+            const gas = !!useThisGas ? Math.max(useThisGas, Web3Utils.DEFAULT_APPROVE_GAS) :
+                yield m.estimateGas({ from });
             return [m.encodeABI(), gas];
         });
     }
