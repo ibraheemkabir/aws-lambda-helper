@@ -32,7 +32,7 @@ function handlePreflight(request: any) {
 }
 
 export class LambdaHttpHandlerHelper {
-    async preProcess(request: LambdaHttpRequest): Promise<{authToken?: string, preFlight?: any}> {
+    static preProcess(request: LambdaHttpRequest): {authToken?: string, preFlight?: any} {
         const preFlight = handlePreflight(request);
         if (preFlight) {
             return {preFlight};
