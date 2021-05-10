@@ -11,6 +11,12 @@ export interface LambdaSqsHandler extends Handler<LambdaSqsRequest, any, any> {
 }
 export interface LambdaHttpHandler extends Handler<LambdaHttpRequest, any, LambdaHttpResponse> {
 }
+export declare class LambdaHttpHandlerHelper {
+    preProcess(request: LambdaHttpRequest): Promise<{
+        authToken?: string;
+        preFlight?: any;
+    }>;
+}
 export declare class HandlerFactory implements Injectable, LifecycleParent<LambdaHttpRequest | LambdaSqsRequest> {
     private sqsHandler;
     private httpHandler;

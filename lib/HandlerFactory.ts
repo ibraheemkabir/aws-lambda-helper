@@ -1,6 +1,6 @@
 import { LambdaHttpRequest, LambdaHttpResponse } from './LambdaHttpRequest';
 import { LambdaSqsRequest } from './LambdaSqsRequest';
-import {Injectable, LifecycleParent, LifecycleContext} from 'ferrum-plumbing';
+import {Injectable, LifecycleParent, LifecycleContext, JsonRpcRequest} from 'ferrum-plumbing';
 
 interface Handler<TReq, TCon, TRes> {
   handle(req: TReq, context: TCon): Promise<TRes>;
@@ -14,6 +14,34 @@ export interface LambdaSqsHandler extends Handler<LambdaSqsRequest, any, any> {
 }
 
 export interface LambdaHttpHandler extends Handler<LambdaHttpRequest, any, LambdaHttpResponse> {
+}
+
+function handlePreflight(request: any) {
+    if (request.method === 'OPTIONS' || request.httpMethod === 'OPTIONS') {
+        return {
+            body: '',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST',
+                'Access-Control-Allow-Headers': '*',
+            },
+            isBase64Encoded: false,
+            statusCode: 200 as any,
+        };
+    }
+}
+
+export class LambdaHttpHandlerHelper {
+    async preProcess(request: LambdaHttpRequest): Promise<{authToken?: string, preFlight?: any}> {
+        const preFlight = handlePreflight(request);
+        if (preFlight) {
+            return {preFlight};
+        }
+        const headers = request.headers as any;
+        const authToken = (headers.authorization || headers.Authorization  || '').split(' ')[1];
+        request.path = request.path || (request as any).url;
+        return {authToken};
+    }
 }
 
 export class HandlerFactory implements Injectable, LifecycleParent<LambdaHttpRequest | LambdaSqsRequest> {
