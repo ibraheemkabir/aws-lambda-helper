@@ -3,6 +3,8 @@ import erc20Abi from './resources/IERC20.json';
 import Web3 from 'web3';
 import Big from 'big.js';
 import { CustomTransactionCallRequest } from "unifyre-extension-sdk";
+import { ethers } from 'ethers';
+import { Eth } from "web3-eth";
 
 export type Web3ProviderConfig = { [network: string]: string };
 
@@ -227,19 +229,38 @@ export class EthereumSmartContractHelper implements Injectable {
 
     public erc20(network: string, token: string) {
         const web3 = this.web3(network);
-        return new web3.Contract(erc20Abi, token);
+        return new web3.Contract(erc20Abi as any, token);
     }
 
-    public web3(network: string) {
+    private _web3(network: string): Web3 {
         ValidationUtils.isTrue(!!this.provider[network], 'No provider is configured for ' + network);
         const key = 'PROVIDER_' + network;
         let prov = this.cache.get(key);
         if (!prov) {
-            prov = new Web3(new Web3.providers.HttpProvider( this.provider[network])).eth;
+            prov = new Web3(new Web3.providers.HttpProvider( this.provider[network]));
             this.cache.set(key, prov, PROVIDER_TIMEOUT);
         }
         return prov;
     }
+
+    public web3Eth(network: string) {
+		return this.web3(network) as Eth;
+    }
+
+    public web3(network: string) {
+		return (this._web3(network) || {} as any).eth;
+    }
+
+	public ethersProvider(network: string) {
+        ValidationUtils.isTrue(!!this.provider[network], 'No provider is configured for ' + network);
+        const key = 'PROVIDER_ETHERS_' + network;
+        let prov = this.cache.get(key);
+        if (!prov) {
+			const ep = new ethers.providers.JsonRpcProvider(this.provider[network]);
+            this.cache.set(key, ep, PROVIDER_TIMEOUT);
+        }
+        return prov;
+	}
 
     public static callRequest(contract: string, currency: string, from: string, data: string, gasLimit: string, nonce: number,
         description: string): CustomTransactionCallRequest {

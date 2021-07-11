@@ -15,6 +15,7 @@ const ferrum_plumbing_1 = require("ferrum-plumbing");
 const IERC20_json_1 = __importDefault(require("./resources/IERC20.json"));
 const web3_1 = __importDefault(require("web3"));
 const big_js_1 = __importDefault(require("big.js"));
+const ethers_1 = require("ethers");
 const PROVIDER_TIMEOUT = 1000 * 3600;
 const MAX_AMOUNT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 class Web3Utils {
@@ -194,13 +195,29 @@ class EthereumSmartContractHelper {
         const web3 = this.web3(network);
         return new web3.Contract(IERC20_json_1.default, token);
     }
-    web3(network) {
+    _web3(network) {
         ferrum_plumbing_1.ValidationUtils.isTrue(!!this.provider[network], 'No provider is configured for ' + network);
         const key = 'PROVIDER_' + network;
         let prov = this.cache.get(key);
         if (!prov) {
-            prov = new web3_1.default(new web3_1.default.providers.HttpProvider(this.provider[network])).eth;
+            prov = new web3_1.default(new web3_1.default.providers.HttpProvider(this.provider[network]));
             this.cache.set(key, prov, PROVIDER_TIMEOUT);
+        }
+        return prov;
+    }
+    web3Eth(network) {
+        return this.web3(network);
+    }
+    web3(network) {
+        return (this._web3(network) || {}).eth;
+    }
+    ethersProvider(network) {
+        ferrum_plumbing_1.ValidationUtils.isTrue(!!this.provider[network], 'No provider is configured for ' + network);
+        const key = 'PROVIDER_ETHERS_' + network;
+        let prov = this.cache.get(key);
+        if (!prov) {
+            const ep = new ethers_1.ethers.providers.JsonRpcProvider(this.provider[network]);
+            this.cache.set(key, ep, PROVIDER_TIMEOUT);
         }
         return prov;
     }

@@ -1,6 +1,7 @@
 import { HexString, Injectable } from "ferrum-plumbing";
 import Big from 'big.js';
 import { CustomTransactionCallRequest } from "unifyre-extension-sdk";
+import { Eth } from "web3-eth";
 export declare type Web3ProviderConfig = {
     [network: string]: string;
 };
@@ -29,8 +30,11 @@ export declare class EthereumSmartContractHelper implements Injectable {
     amountToHuman(currency: string, amount: string): Promise<string>;
     symbol(currency: string): Promise<string>;
     decimals(currency: string): Promise<number>;
-    erc20(network: string, token: string): any;
-    web3(network: string): any;
+    erc20(network: string, token: string): import("web3-eth-contract").Contract;
+    private _web3;
+    web3Eth(network: string): Eth;
+    web3(network: string): Eth;
+    ethersProvider(network: string): any;
     static callRequest(contract: string, currency: string, from: string, data: string, gasLimit: string, nonce: number, description: string): CustomTransactionCallRequest;
     static parseCurrency(currency: string): [string, string];
     static toCurrency(network: string, token: string): string;
