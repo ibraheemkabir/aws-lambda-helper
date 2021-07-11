@@ -2,8 +2,8 @@ import { HexString, Injectable, LocalCache, ValidationUtils } from "ferrum-plumb
 import erc20Abi from './resources/IERC20.json';
 import Web3 from 'web3';
 import Big from 'big.js';
-import { CustomTransactionCallRequest } from "unifyre-extension-sdk";
-import { ethers } from 'ethers';
+import { CustomTransactionCallRequest, GasParameters } from "unifyre-extension-sdk";
+import { ethers, PopulatedTransaction } from 'ethers';
 import { Eth } from "web3-eth";
 
 export type Web3ProviderConfig = { [network: string]: string };
@@ -260,6 +260,23 @@ export class EthereumSmartContractHelper implements Injectable {
             this.cache.set(key, ep, PROVIDER_TIMEOUT);
         }
         return prov;
+	}
+
+	public static fromTypechainTransaction(t: PopulatedTransaction): CustomTransactionCallRequest {
+		return {
+			amount: '',
+			gas: {
+				gasLimit: (t.gasLimit || '').toString(),
+				gasPrice: (t.gasPrice || '').toString(),
+			} as GasParameters,
+			contract: t.to,
+			currency: '',
+			data: t.data,
+			from: t.from,
+			description: ``,
+			nonce: t.nonce,
+			value: t.value,
+		} as CustomTransactionCallRequest;
 	}
 
     public static callRequest(contract: string, currency: string, from: string, data: string, gasLimit: string, nonce: number,

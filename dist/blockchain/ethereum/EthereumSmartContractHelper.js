@@ -221,6 +221,22 @@ class EthereumSmartContractHelper {
         }
         return prov;
     }
+    static fromTypechainTransaction(t) {
+        return {
+            amount: '',
+            gas: {
+                gasLimit: (t.gasLimit || '').toString(),
+                gasPrice: (t.gasPrice || '').toString(),
+            },
+            contract: t.to,
+            currency: '',
+            data: t.data,
+            from: t.from,
+            description: ``,
+            nonce: t.nonce,
+            value: t.value,
+        };
+    }
     static callRequest(contract, currency, from, data, gasLimit, nonce, description) {
         return {
             currency,
