@@ -227,6 +227,16 @@ export class EthereumSmartContractHelper implements Injectable {
         });
     }
 
+    public async name(currency: string): Promise<string> {
+        const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+        try {
+            return this.cache.getAsync('NAME_' + currency, () => {
+                const tokenCon = this.erc20(network, token);
+                return tokenCon.methods.name().call();
+            });
+        } catch (e) { return ''; }
+    }
+
     public erc20(network: string, token: string) {
         const web3 = this.web3(network);
         return new web3.Contract(erc20Abi as any, token);

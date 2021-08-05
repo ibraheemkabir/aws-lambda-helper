@@ -191,6 +191,20 @@ class EthereumSmartContractHelper {
             });
         });
     }
+    name(currency) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const [network, token] = EthereumSmartContractHelper.parseCurrency(currency);
+            try {
+                return this.cache.getAsync('NAME_' + currency, () => {
+                    const tokenCon = this.erc20(network, token);
+                    return tokenCon.methods.name().call();
+                });
+            }
+            catch (e) {
+                return '';
+            }
+        });
+    }
     erc20(network, token) {
         const web3 = this.web3(network);
         return new web3.Contract(IERC20_json_1.default, token);
