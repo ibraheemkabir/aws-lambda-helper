@@ -251,6 +251,20 @@ class EthereumSmartContractHelper {
             value: t.value,
         };
     }
+    fromTypechainTransactionWithGas(network, t, from) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const transaction = EthereumSmartContractHelper.fromTypechainTransaction(t);
+            let gasLimit = undefined;
+            try {
+                gasLimit = (yield this.ethersProvider(network).estimateGas(t, { from })).toString();
+            }
+            catch (e) {
+                console.error('Error estimating gas for tx: ', t, e);
+            }
+            transaction.gas.gasLimit = gasLimit;
+            return transaction;
+        });
+    }
     static callRequest(contract, currency, from, data, gasLimit, nonce, description) {
         return {
             currency,

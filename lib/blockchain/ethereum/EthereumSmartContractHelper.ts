@@ -289,6 +289,19 @@ export class EthereumSmartContractHelper implements Injectable {
 		} as CustomTransactionCallRequest;
 	}
 
+	public async fromTypechainTransactionWithGas(network: string, t: PopulatedTransaction, from: string):
+		Promise<CustomTransactionCallRequest> {
+		const transaction = EthereumSmartContractHelper.fromTypechainTransaction(t);
+		let gasLimit: string|undefined = undefined;
+		try {
+			gasLimit = (await this.ethersProvider(network).estimateGas(t, {from})).toString();
+		} catch (e) {
+			console.error('Error estimating gas for tx: ', t, e as Error);
+		}
+		transaction.gas.gasLimit = gasLimit!;
+		return transaction;
+	}
+
     public static callRequest(contract: string, currency: string, from: string, data: string, gasLimit: string, nonce: number,
         description: string): CustomTransactionCallRequest {
         return {
