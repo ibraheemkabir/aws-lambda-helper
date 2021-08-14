@@ -23,12 +23,21 @@
     "babel-jest": "^24.8.0",
     "jest": "^24.8.0",
     "ts-loader": "^6.0.4",
+    "ts-node": "^10.2.0",
     "tslint": "^5.0.0",
     "tslint-config-airbnb-base": "^0.3.0",
     "typescript": "^3.5.3",
     "webpack-babel-jest": "^1.0.4"
   },
+  "oclif": {
+    "commands": "./lib/security/cli",
+    "bin": "ferrum-cryptor",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
   "dependencies": {
+    "@oclif/command": "^1.8.0",
     "aws-sdk": "^2.572.0",
     "big.js": "^5.2.2",
     "ethers": "^5.4.1",
