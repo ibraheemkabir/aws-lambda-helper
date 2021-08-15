@@ -1,9 +1,10 @@
 import {Command, flags} from '@oclif/command';
-import { EncryptedData, panick } from 'ferrum-plumbing';
+import { EncryptedData, panick, ValidationUtils } from 'ferrum-plumbing';
 import { LambdaGlobalContext } from '../../LambdaGlobalContext';
 import { CryptorModule } from '../CryptorModule';
 import { DoubleEncryptiedSecret } from '../DoubleEncryptionService';
 import { TwoFaEncryptionClient } from '../TwoFaEncryptionClient';
+import crypto from 'crypto';
 
 export class CryptorCli extends Command {
 	static description = 'Ferrum crypto command line';
@@ -31,7 +32,7 @@ export class CryptorCli extends Command {
 			name: 'command',
 			require: true,
 			description: 'Crypto commands',
-			options: ['new-2fa', 'encrypt', 'decrypt'],
+			options: ['new-2fa', 'encrypt', 'decrypt', 'privateKey'],
 		}
 	]
 
@@ -60,6 +61,23 @@ export class CryptorCli extends Command {
 				console.log(dataToEncrypt);
 				console.log('Result:');
 				console.log(res);
+				return;
+			case 'privateKey':
+				const secretHex = crypto.randomBytes(32).toString('hex');
+				ValidationUtils.isTrue(secretHex.length === 64, 'Bad randomHex size!');
+				const histo: any = {}
+				secretHex.split('').forEach(c => histo[c] = (histo[c] || 0) + 1);
+				// If something is wrong with random. E.g. all zero, fail. User will not see the 
+				// generated data to know.
+				ValidationUtils.isTrue(!Object.keys(histo).find(c => histo[c] >= 10), 'Weird random. Try again');
+				const sk = await container.get<DoubleEncryptiedSecret>(DoubleEncryptiedSecret).encrypt(
+					flags.twoFaId || panick('--twoFaId is required') as any,
+					flags.twoFa || panick('--twoFa is required') as any,
+					secretHex,
+				);
+				console.log('Private key generated: *********')
+				console.log('Encrypted private key:');
+				console.log(sk);
 				return;
 			case 'decrypt':
 				const doubleEnc = container.get<DoubleEncryptiedSecret>(DoubleEncryptiedSecret);

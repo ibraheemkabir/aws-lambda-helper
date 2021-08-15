@@ -1,7 +1,9 @@
-import { WebNativeCryptor } from "ferrum-crypto";
+import { randomBytes, WebNativeCryptor } from "ferrum-crypto";
 import { EncryptedData, Fetcher, HexString, Injectable, JsonRpcRequest,
 	LoggerFactory, ValidationUtils } from "ferrum-plumbing";
 import { HmacAuthProvider } from "./HmacAuthProvider";
+
+const DATA_KEY_DELIM = '|**|';
 
 export class TwoFaEncryptionClient implements Injectable {
 	private fetcher: Fetcher;
@@ -17,9 +19,14 @@ export class TwoFaEncryptionClient implements Injectable {
 
 	__name__() { return 'TwoFaEncryptionClient'; }
 
-	async encryp(twoFaId: string, twoFa: string, data: HexString): Promise<EncryptedData> {
-		const wrapperKey = await this.getTwoFaWrapperKey(twoFaId, twoFa);
-		return this.cyptor.encryptHex(data, wrapperKey);
+	async encrypt(twoFaId: string, twoFa: string, data: HexString): Promise<EncryptedData> {
+		const dataKeyId = randomBytes(32);
+		const wrapperKey = await this.getTwoFaWrapperKey(twoFaId, twoFa, dataKeyId);
+		const encrypted = await this.cyptor.encryptHex(data, wrapperKey);
+		return {
+			key: encrypted.key,
+			data: `${dataKeyId}${DATA_KEY_DELIM}${encrypted.data}`,
+		};
 	}
 
 	async newKey(): Promise<{ keyId: string, secret: string }> {
@@ -39,12 +46,16 @@ export class TwoFaEncryptionClient implements Injectable {
 	}
 
 	async decrypt(twoFaId: string, twoFa: string, data: EncryptedData): Promise<HexString> {
-		const wrapperKey = await this.getTwoFaWrapperKey(twoFaId, twoFa);
-		return this.cyptor.decryptToHex(data, wrapperKey);
+		const dataKey = data.key;
+		const [dataKeyId, dataData] = data.data.split(DATA_KEY_DELIM, 2);
+		ValidationUtils.isTrue(!!dataData, 'Data does not include key Id');
+		const wrapperKey = await this.getTwoFaWrapperKey(twoFaId, twoFa, dataKeyId);
+		return this.cyptor.decryptToHex({key: dataKey, data: dataData}, wrapperKey);
 	}
 
-	private async getTwoFaWrapperKey(keyId: string, twoFa: string): Promise<string> {
-		const req = JSON.stringify({ command: 'getTwoFaWrapperKey', data: { keyId, twoFa }, params: [] } as JsonRpcRequest);
+	private async getTwoFaWrapperKey(keyId: string, twoFa: string, dataKeyId: string): Promise<string> {
+		const req = JSON.stringify({ command: 'getTwoFaWrapperKey',
+			data: { keyId, twoFa, dataKeyId }, params: [] } as JsonRpcRequest);
 		const auth = new HmacAuthProvider(req, this.apiSecret, this.apiPub);
 		const res = await this.fetcher.fetch<{wrapperKey: string}>(this.uri, {
                 method: 'POST',

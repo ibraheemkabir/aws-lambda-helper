@@ -29,7 +29,7 @@ class DoubleEncryptiedSecret {
         return __awaiter(this, void 0, void 0, function* () {
             const secret1 = yield this.ksmCryptor.encryptHex(clearText);
             const msg = `${secret1.key}|+|${secret1.data}`;
-            return yield this.twoFaCryptor.encryp(twoFaId, twoFa, msg);
+            return yield this.twoFaCryptor.encrypt(twoFaId, twoFa, msg);
         });
     }
     secret() {

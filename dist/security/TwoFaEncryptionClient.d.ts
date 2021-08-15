@@ -8,7 +8,7 @@ export declare class TwoFaEncryptionClient implements Injectable {
     private fetcher;
     constructor(cyptor: WebNativeCryptor, uri: string, logFac: LoggerFactory, apiSecret: string, apiPub: string);
     __name__(): string;
-    encryp(twoFaId: string, twoFa: string, data: HexString): Promise<EncryptedData>;
+    encrypt(twoFaId: string, twoFa: string, data: HexString): Promise<EncryptedData>;
     newKey(): Promise<{
         keyId: string;
         secret: string;

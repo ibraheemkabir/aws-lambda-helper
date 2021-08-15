@@ -23,7 +23,7 @@ export class DoubleEncryptiedSecret implements Injectable {
 	async encrypt(twoFaId: string, twoFa: string, clearText: HexString): Promise<EncryptedData> {
 		const secret1 = await this.ksmCryptor.encryptHex(clearText);
 		const msg = `${secret1.key}|+|${secret1.data}`;
-		return await this.twoFaCryptor.encryp(twoFaId, twoFa, msg);
+		return await this.twoFaCryptor.encrypt(twoFaId, twoFa, msg);
 	}
 
 	secret(): HexString {

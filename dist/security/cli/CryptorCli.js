@@ -7,6 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("@oclif/command");
 const ferrum_plumbing_1 = require("ferrum-plumbing");
@@ -14,6 +17,7 @@ const LambdaGlobalContext_1 = require("../../LambdaGlobalContext");
 const CryptorModule_1 = require("../CryptorModule");
 const DoubleEncryptionService_1 = require("../DoubleEncryptionService");
 const TwoFaEncryptionClient_1 = require("../TwoFaEncryptionClient");
+const crypto_1 = __importDefault(require("crypto"));
 class CryptorCli extends command_1.Command {
     run() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -30,6 +34,19 @@ class CryptorCli extends command_1.Command {
                     console.log(dataToEncrypt);
                     console.log('Result:');
                     console.log(res);
+                    return;
+                case 'privateKey':
+                    const secretHex = crypto_1.default.randomBytes(32).toString('hex');
+                    ferrum_plumbing_1.ValidationUtils.isTrue(secretHex.length === 64, 'Bad randomHex size!');
+                    const histo = {};
+                    secretHex.split('').forEach(c => histo[c] = (histo[c] || 0) + 1);
+                    // If something is wrong with random. E.g. all zero, fail. User will not see the 
+                    // generated data to know.
+                    ferrum_plumbing_1.ValidationUtils.isTrue(!Object.keys(histo).find(c => histo[c] >= 10), 'Weird random. Try again');
+                    const sk = yield container.get(DoubleEncryptionService_1.DoubleEncryptiedSecret).encrypt(flags.twoFaId || ferrum_plumbing_1.panick('--twoFaId is required'), flags.twoFa || ferrum_plumbing_1.panick('--twoFa is required'), secretHex);
+                    console.log('Private key generated: *********');
+                    console.log('Encrypted private key:');
+                    console.log(sk);
                     return;
                 case 'decrypt':
                     const doubleEnc = container.get(DoubleEncryptionService_1.DoubleEncryptiedSecret);
@@ -73,7 +90,7 @@ CryptorCli.args = [
         name: 'command',
         require: true,
         description: 'Crypto commands',
-        options: ['new-2fa', 'encrypt', 'decrypt'],
+        options: ['new-2fa', 'encrypt', 'decrypt', 'privateKey'],
     }
 ];
 exports.CryptorCli = CryptorCli;
