@@ -5,7 +5,7 @@ export class HmacAuthProvider implements AuthenticationProvider, AuthenticationV
 	constructor(private postData: string,
 			private secret?: HexString,
 			private publicKey?: string,
-			private publicToSecret?: (k: string) => string,
+			private publicToSecret?: (k: string) => Promise<string>,
 		) {
 	}
 

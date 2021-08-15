@@ -4,7 +4,7 @@ export declare class HmacAuthProvider implements AuthenticationProvider, Authent
     private secret?;
     private publicKey?;
     private publicToSecret?;
-    constructor(postData: string, secret?: string | undefined, publicKey?: string | undefined, publicToSecret?: ((k: string) => string) | undefined);
+    constructor(postData: string, secret?: string | undefined, publicKey?: string | undefined, publicToSecret?: ((k: string) => Promise<string>) | undefined);
     asHeader(): {
         key: string;
         value: string;
