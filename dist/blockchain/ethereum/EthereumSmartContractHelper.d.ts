@@ -39,7 +39,7 @@ export declare class EthereumSmartContractHelper implements Injectable {
     ethersProvider(network: string): any;
     static fromTypechainTransaction(t: PopulatedTransaction): CustomTransactionCallRequest;
     fromTypechainTransactionWithGas(network: string, t: PopulatedTransaction, from: string): Promise<CustomTransactionCallRequest>;
-    static callRequest(contract: string, currency: string, from: string, data: string, gasLimit: string, nonce: number, description: string): CustomTransactionCallRequest;
+    static callRequest(contract: string, currency: string, from: string, data: string, gasLimit: string, nonce: number, description: string, gasPrice?: string): CustomTransactionCallRequest;
     static parseCurrency(currency: string): [string, string];
     static toCurrency(network: string, token: string): string;
 }

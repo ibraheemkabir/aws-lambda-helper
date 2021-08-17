@@ -265,14 +265,14 @@ class EthereumSmartContractHelper {
             return transaction;
         });
     }
-    static callRequest(contract, currency, from, data, gasLimit, nonce, description) {
+    static callRequest(contract, currency, from, data, gasLimit, nonce, description, gasPrice) {
         return {
             currency,
             from,
             amount: '0',
             contract,
             data,
-            gas: { gasPrice: '0', gasLimit },
+            gas: { gasPrice, gasLimit },
             nonce,
             description,
         };

@@ -303,14 +303,14 @@ export class EthereumSmartContractHelper implements Injectable {
 	}
 
     public static callRequest(contract: string, currency: string, from: string, data: string, gasLimit: string, nonce: number,
-        description: string): CustomTransactionCallRequest {
+        description: string,gasPrice?:string): CustomTransactionCallRequest {
         return {
             currency,
             from,
             amount: '0',
             contract,
             data,
-            gas: { gasPrice: '0', gasLimit },
+            gas: { gasPrice, gasLimit },
             nonce,
             description,
         };
